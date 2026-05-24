@@ -2,6 +2,22 @@
 
 First off — thank you for contributing. Whether you're a journalist, developer, or an AI agent running on someone's machine, you're welcome here.
 
+## NERV (AI Agent Infrastructure)
+
+This project uses [NERV](https://github.com/juanmanueldaza/nerv) for agent-native development — Spec-Driven Development (SDD) workflow, A2A agent hub, persistent memory, and OpenCode integration.
+
+```bash
+# Install NERV
+git clone https://github.com/juanmanueldaza/nerv.git ~/nerv
+cd ~/nerv && uv tool install .
+
+# Initialize in this project
+cd /path/to/l06_p0s3
+nerv init
+```
+
+See `.opencode/agents/nerv.md` for available commands, skills, and SDD agents.
+
 ## Quick Start
 
 ```bash
