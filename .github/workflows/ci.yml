@@ -2,31 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
 
 jobs:
-  codeql:
-    name: CodeQL Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: javascript
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
-
-      - name: Run CodeQL
-        uses: github/codeql-action/analyze@v2
-
   build-and-lint:
-    name: Install, Lint and Audit
+    name: Install, Lint and Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: |
@@ -47,27 +34,51 @@ jobs:
 
       - name: Run ESLint
         run: |
-          if command -v npm >/dev/null 2>&1 && grep -q "eslint" package.json 2>/dev/null; then
-            npm run lint --if-present
+          if [ -f package.json ] && grep -q '"lint"' package.json 2>/dev/null; then
+            npm run lint
           else
-            echo "ESLint not configured (skipped)"
+            echo "No lint script found (skipped)"
           fi
 
-      - name: TypeScript build
+      - name: TypeScript type check
         run: |
-          if command -v npm >/dev/null 2>&1 && grep -q "build" package.json 2>/dev/null; then
-            npm run build --if-present
+          if [ -f package.json ] && grep -q '"typecheck"' package.json 2>/dev/null; then
+            npm run typecheck
+          else
+            echo "No typecheck script found (skipped)"
+          fi
+
+      - name: Build
+        run: |
+          if [ -f package.json ] && grep -q '"build"' package.json 2>/dev/null; then
+            npm run build
           else
             echo "No build script found (skipped)"
           fi
 
-      - name: NPM Audit
-        run: |
-          if [ -f package-lock.json ] || [ -f package.json ]; then
-            npm audit --audit-level=high || true
-          else
-            echo "No package.json found — skipping npm audit"
-          fi
+  codeql:
+    name: CodeQL Scan
+    runs-on: ubuntu-latest
+    # Only run CodeQL when there is actual JS/TS code to analyze
+    if: ${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/tsconfig.json') != '' }}
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Run CodeQL
+        uses: github/codeql-action/analyze@v3
 
   secret-scan:
     name: Secret scan (gitleaks)
@@ -75,8 +86,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Run gitleaks
         uses: zricethezav/gitleaks-action@v2
-        with:
-          args: --report-path=gitleaks-report.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
