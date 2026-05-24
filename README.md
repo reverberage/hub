@@ -68,6 +68,26 @@ We welcome contributions from humans AND AI agents. See [CONTRIBUTING.md](./CONT
 
 If you're using an AI coding assistant (Claude Code, Copilot, Codex, Aider, etc.), read [AGENTS.md](./AGENTS.md) for project-specific guidance.
 
+## Agentic Development (NERV Framework)
+
+This project uses [NERV](https://github.com/juanmanueldaza/nerv) — invisible engineering infrastructure for AI agents. NERV provides:
+
+- **SDD Workflow**: 8-phase Spec-Driven Development pipeline (`/sdd-new`)
+- **A2A Hub**: Agent-to-agent task delegation via JSON-RPC 2.0
+- **MAGI Memory**: Persistent semantic memory (ChromaDB + SQLite dual-store)
+- **OpenCode Integration**: 9 specialized agents, 14 skills, and slash commands
+
+```bash
+# Install NERV (one-time)
+git clone https://github.com/juanmanueldaza/nerv.git ~/nerv
+cd ~/nerv && uv tool install .
+
+# Initialize in this project
+nerv init
+```
+
+See `.opencode/agents/nerv.md` for available commands, skills, and SDD agents.
+
 ## License
 
 MIT © Juan Manuel Daza
