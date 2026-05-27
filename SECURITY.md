@@ -1,16 +1,13 @@
-# Security
+# Security Policy
 
-## Trust Model
+## Supported Versions
 
-l06_p0s3 assumes a **trusted local environment**. All services bind to `127.0.0.1` only.
+We currently support the latest version with security updates.
 
-## Rules
+## Reporting a Vulnerability
 
-See `AGENTS.md` for security-related coding standards:
-- Never hardcode secrets or credentials
-- Never commit `.env` files
-- Use environment variables for sensitive configuration
+If you discover a security vulnerability, please send an email to juanmanueldaza@gmail.com.
 
-## Reporting
+Please do not report security vulnerabilities through public GitHub issues.
 
-Report security issues directly to the project maintainers. Do not open public issues for vulnerabilities.
+We will acknowledge receipt within 48 hours and provide a timeline for a fix.
