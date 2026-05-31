@@ -68,9 +68,9 @@ We welcome contributions from humans AND AI agents. See [CONTRIBUTING.md](./CONT
 
 If you're using an AI coding assistant (Claude Code, Copilot, Codex, Aider, etc.), read [AGENTS.md](./AGENTS.md) for project-specific guidance.
 
-## Agentic Development (NERV Framework)
+## Agentic Development (N3RV Framework)
 
-This project uses [NERV](https://github.com/juanmanueldaza/nerv) — invisible engineering infrastructure for AI agents. NERV provides:
+This project uses [N3RV](https://github.com/juanmanueldaza/n3rv) — invisible engineering infrastructure for AI agents. N3RV provides:
 
 - **SDD Workflow**: 8-phase Spec-Driven Development pipeline (`/sdd-new`)
 - **A2A Hub**: Agent-to-agent task delegation via JSON-RPC 2.0
@@ -78,15 +78,15 @@ This project uses [NERV](https://github.com/juanmanueldaza/nerv) — invisible e
 - **OpenCode Integration**: 9 specialized agents, 14 skills, and slash commands
 
 ```bash
-# Install NERV (one-time)
-git clone https://github.com/juanmanueldaza/nerv.git ~/nerv
-cd ~/nerv && uv tool install .
+# Install N3RV (one-time)
+git clone https://github.com/juanmanueldaza/n3rv.git ~/n3rv
+cd ~/n3rv && uv tool install .
 
 # Initialize in this project
-nerv init
+n3rv init
 ```
 
-See `.opencode/agents/nerv.md` for available commands, skills, and SDD agents.
+See `.opencode/agents/n3rv.md` for available commands, skills, and SDD agents.
 
 ## License
 
