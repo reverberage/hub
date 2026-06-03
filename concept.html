@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>l06_p0s3 — The Ableton Live for News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0A0A0A;
+    --paper: #FDFBF7;
+    --crimson: #D00000;
+    --ui: #FFFFFF;
+    --fade: rgba(255,255,255,0.04);
+    --fade-hover: rgba(255,255,255,0.08);
+    --muted: rgba(255,255,255,0.30);
+    --text: rgba(255,255,255,0.82);
+    --text-dim: rgba(255,255,255,0.50);
+    --font-sans: "Inter", "Geist Sans", system-ui, sans-serif;
+    --font-serif: "Playfair Display", "GT Super", Georgia, serif;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.6;
+    overflow: hidden;
+    height: 100dvh;
+    display: flex;
+  }
+
+  /* ── Sidebar Rail ── */
+  nav.sidebar {
+    width: 56px;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 0;
+    border-right: none;
+    position: relative;
+  }
+  nav.sidebar::after {
+    content: ""; position: absolute; right: 0; top: 32px; bottom: 32px;
+    width: 1px; background: rgba(255,255,255,0.06);
+  }
+  nav.sidebar .logo {
+    font-family: var(--font-serif);
+    font-size: 18px; font-weight: 700; color: var(--crimson);
+    margin-bottom: 36px; user-select: none;
+  }
+  nav.sidebar .nav-icon {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 6px; border-radius: 6px; cursor: pointer;
+    color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s, color 0.15s;
+  }
+  nav.sidebar .nav-icon:hover { background: var(--fade-hover); color: var(--text); }
+  nav.sidebar .nav-icon.active { color: var(--crimson); background: var(--fade); }
+
+  /* ── Main Area ── */
+  main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Railbar (top status) ── */
+  .railbar {
+    padding: 16px 32px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 56px; user-select: none;
+  }
+  .railbar .view-label {
+    font-family: var(--font-serif); font-size: 20px; font-weight: 500; color: var(--text);
+  }
+  .railbar .right-group { display: flex; align-items: center; gap: 16px; }
+  .railbar .focus-toggle {
+    font-family: var(--font-sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    cursor: pointer; padding: 6px 12px; border-radius: 4px; transition: color 0.15s;
+  }
+  .railbar .focus-toggle:hover { color: var(--text); background: var(--fade); }
+  .railbar .focus-toggle.active { color: var(--crimson); }
+
+  /* ── Reading Room (50/50 Split) ── */
+  .reading-room { flex: 1; display: flex; overflow: hidden; }
+  .feed-pane {
+    flex: 1; overflow-y: auto; padding: 8px 32px 32px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+  .source-pane {
+    flex: 1; overflow-y: auto; padding: 24px 32px 32px;
+    background: var(--fade);
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+  .source-pane .source-url {
+    font-family: var(--font-sans); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .source-pane .source-url span { color: var(--crimson); }
+  .source-pane h2 {
+    font-family: var(--font-serif); font-size: 22px; font-weight: 500;
+    color: var(--text); margin-bottom: 16px; line-height: 1.35;
+  }
+  .source-pane .byline {
+    font-family: var(--font-sans); font-size: 11px; color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+  .source-pane .snippet {
+    font-family: var(--font-serif); font-size: 15px; line-height: 1.8; color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  .source-pane .snippet mark {
+    background: none; color: var(--crimson); font-weight: 500;
+  }
+  .source-pane .provenance {
+    padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.06);
+    font-family: var(--font-sans); font-size: 11px; color: var(--muted);
+  }
+  .source-pane .provenance strong { color: var(--text); }
+
+  /* ── Feed Items ── */
+  .feed-item {
+    padding: 20px 0; cursor: pointer; position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: opacity 0.2s;
+  }
+  .feed-item:hover { opacity: 0.92; }
+  .feed-item .score {
+    font-family: var(--font-sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .feed-item .score .high { color: var(--crimson); }
+  .feed-item h3 {
+    font-family: var(--font-serif); font-size: 18px; font-weight: 500;
+    color: var(--text); line-height: 1.35; margin-bottom: 6px;
+  }
+  .feed-item .meta {
+    font-family: var(--font-sans); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+  .feed-item.selected h3 { color: var(--ui); }
+  .feed-item.selected::before {
+    content: ""; position: absolute; left: -16px; top: 22px; bottom: 22px;
+    width: 3px; background: var(--crimson); border-radius: 0 2px 2px 0;
+  }
+  .feed-item.selected { background: var(--fade); margin: 0 -32px; padding: 20px 32px; }
+
+  /* ── Floating Action Bar ── */
+  .action-bar {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; padding: 8px 12px;
+    background: rgba(20,20,20,0.92); backdrop-filter: blur(12px);
+    border-radius: 10px; transition: opacity 0.3s, transform 0.3s;
+  }
+  .action-bar.hidden { opacity: 0; transform: translateX(-50%) translateY(16px); pointer-events: none; }
+  .action-btn {
+    padding: 8px 18px; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    border: none; background: transparent; color: var(--muted);
+    border-radius: 6px; cursor: pointer; transition: all 0.15s;
+  }
+  .action-btn:hover { background: var(--fade-hover); color: var(--text); }
+  .action-btn.primary { color: var(--crimson); }
+  .action-btn.primary:hover { background: rgba(208,0,0,0.12); }
+
+  /* ── Focus Mode ── */
+  body.focus .sidebar { opacity: 0; width: 0; overflow: hidden; transition: opacity 0.4s; }
+  body.focus .railbar { opacity: 0; min-height: 0; height: 0; overflow: hidden; transition: opacity 0.4s; }
+  body.focus .source-pane { flex: 0; overflow: hidden; transition: flex 0.4s; }
+  body.focus .feed-pane { padding: 32px 80px; }
+
+  /* ── Section Header ── */
+  .section-header {
+    font-family: var(--font-sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    padding: 24px 0 6px; margin-bottom: 0;
+  }
+
+  /* ── Placeholder views ── */
+  .placeholder-view {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-serif); font-size: 28px; color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── Footer bar ── */
+  .status-bar {
+    position: fixed; bottom: 10px; right: 20px;
+    font-family: var(--font-sans); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    z-index: 10;
+  }
+  .status-bar .pulse { color: var(--crimson); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">l06</div>
+  <div class="nav-icon active" data-view="triage" title="Reading Room">T</div>
+  <div class="nav-icon" data-view="editor" title="Writing Desk">W</div>
+  <div class="nav-icon" data-view="research" title="Research Desk">R</div>
+  <div class="nav-icon" data-view="signals" title="Signal Exchange">S</div>
+  <div class="nav-icon" data-view="review" title="Editorial Review">E</div>
+</nav>
+
+<main>
+  <div class="railbar">
+    <span class="view-label">Reading Room</span>
+    <div class="right-group">
+      <span class="focus-toggle" id="focusToggle">⊡ Focus Mode</span>
+    </div>
+  </div>
+
+  <!-- Triage / Reading Room -->
+  <div class="reading-room" id="view-triage">
+    <div class="feed-pane">
+      <div class="section-header">Incoming Leads</div>
+      <div class="feed-item selected">
+        <div class="score">Source · <span class="high">92%</span> confidence</div>
+        <h3>AI-generated content is drowning local newsrooms — and they don't have the tools to fight back</h3>
+        <div class="meta">Reuters Institute · 4h ago · 12,400 views</div>
+      </div>
+      <div class="feed-item">
+        <div class="score">Source · 87% confidence</div>
+        <h3>The quiet collapse of fact-checking departments across European media</h3>
+        <div class="meta">Nieman Lab · 7h ago · 8,200 views</div>
+      </div>
+      <div class="feed-item">
+        <div class="score">Signal · <span class="high">94%</span> confidence</div>
+        <h3>OpenAI quietly removes journalist protections from enterprise contracts</h3>
+        <div class="meta">The Verge · 11h ago · 31,000 views</div>
+      </div>
+      <div class="feed-item">
+        <div class="score">Lead · 71% confidence</div>
+        <h3>News Corp signs exclusive AI training deal — terms undisclosed</h3>
+        <div class="meta">Bloomberg · 14h ago · 9,800 views</div>
+      </div>
+      <div class="section-header">Monitored</div>
+      <div class="feed-item">
+        <div class="score">Snoozed · 3 days remaining</div>
+        <h3>EU AI Act enforcement mechanisms still unfunded</h3>
+        <div class="meta">TechCrunch · 2d ago · 4,100 views</div>
+      </div>
+    </div>
+    <div class="source-pane">
+      <div class="source-url">▸ <span>reutersinstitute.politics.ox.ac.uk</span> / AI-generated-content-local-newsrooms</div>
+      <h2>AI-generated content is drowning local newsrooms — and they don't have the tools to fight back</h2>
+      <div class="byline">Reuters Institute for the Study of Journalism · June 2, 2026</div>
+      <div class="snippet">
+        <p>A new survey of 200 local newsrooms across Europe and North America reveals a stark reality: 68% of editors report spending more time <mark>verifying AI-generated content</mark> than producing original reporting. The tools they use — basic reverse image search, manual source tracing — were designed for a pre-generative-AI era.</p>
+        <p style="margin-top:14px">"We're fighting machines with spreadsheets," said one editor at a mid-size German regional paper. "The AI slop arrives faster than we can debunk it."</p>
+      </div>
+      <div class="provenance">
+        <strong>Provenance:</strong> Original article published June 2, 2026 on reutersinstitute.politics.ox.ac.uk. Crawled at 08:14 UTC. 4 sources corroborated. Status: <span style="color:var(--crimson)">VERIFIED</span>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Other views (placeholders) -->
+  <div class="placeholder-view" id="view-editor" style="display:none">Writing Desk — Drafting</div>
+  <div class="placeholder-view" id="view-research" style="display:none">Research Desk — Fact gathering in progress</div>
+  <div class="placeholder-view" id="view-signals" style="display:none">Signal Exchange — 3 federated sources online</div>
+  <div class="placeholder-view" id="view-review" style="display:none">Editorial Review — Awaiting human sign-off</div>
+</main>
+
+<div class="action-bar" id="actionBar">
+  <button class="action-btn">← Archive</button>
+  <button class="action-btn">Snooze</button>
+  <button class="action-btn primary">→ Assign</button>
+  <button class="action-btn">Monitor</button>
+</div>
+
+<div class="status-bar">l06_p0s3 <span class="pulse">●</span> concept preview · <a href="https://github.com/juanmanueldaza/l06_p0s3" style="color:var(--muted)">github.com/juanmanueldaza/l06_p0s3</a></div>
+
+<script>
+  // Focus mode toggle
+  const focusToggle = document.getElementById('focusToggle');
+  focusToggle.addEventListener('click', () => {
+    document.body.classList.toggle('focus');
+    focusToggle.classList.toggle('active');
+    focusToggle.textContent = document.body.classList.contains('focus') ? '⊡ Focus Active' : '⊡ Focus Mode';
+  });
+
+  // View switching
+  const navIcons = document.querySelectorAll('.nav-icon');
+  const views = ['triage','editor','research','signals','review'];
+  navIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      navIcons.forEach(i => i.classList.remove('active'));
+      icon.classList.add('active');
+      const viewId = icon.dataset.view;
+      views.forEach(v => document.getElementById('view-' + v).style.display = 'none');
+      document.getElementById('view-' + viewId).style.display = '';
+      // Update label
+      const labels = { triage: 'Reading Room', editor: 'Writing Desk', research: 'Research Desk', signals: 'Signal Exchange', review: 'Editorial Review' };
+      document.querySelector('.view-label').textContent = labels[viewId];
+    });
+  });
+
+  // Feed item selection
+  document.querySelectorAll('.feed-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.feed-item').forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+    });
+  });
+
+  // Hide action bar on scroll
+  let scrollTimeout;
+  const actionBar = document.getElementById('actionBar');
+  const feedPane = document.querySelector('.feed-pane');
+  feedPane.addEventListener('scroll', () => {
+    actionBar.classList.add('hidden');
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => actionBar.classList.remove('hidden'), 1500);
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.body.classList.toggle('focus');
+      focusToggle.classList.toggle('active');
+      focusToggle.textContent = document.body.classList.contains('focus') ? '⊡ Focus Active' : '⊡ Focus Mode';
+    }
+  });
+</script>
+</body>
+</html>
