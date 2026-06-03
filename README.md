@@ -1,5 +1,8 @@
 # l06_p0s3 (Log Pose)
 
+![License](https://img.shields.io/github/license/juanmanueldaza/l06_p0s3?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/juanmanueldaza/l06_p0s3?style=flat-square)
+
 > **The Ableton Live for News** — a Newsroom Operating System that orchestrates AI agents for sourcing, research, and drafting while keeping journalists in creative control.
 
 Like the Log Pose from One Piece that locks onto the next island and guides navigators through unpredictable seas, l06_p0s3 locks onto the story and guides journalists through the chaos of information.
