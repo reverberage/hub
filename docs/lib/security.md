@@ -1,6 +1,6 @@
 # Security Guidance — Concrete Snippets
 
-This document contains practical, copy-pasteable guidance for l06_p0s3 (Log Pose): CSP headers, SSRF validation, Supabase RLS snippets, and LLM-output sanitization patterns.
+This document contains practical, copy-pasteable guidance for lo6: CSP headers, SSRF validation, Supabase RLS snippets, and LLM-output sanitization patterns.
 
 ## Content-Security-Policy (CSP) Example
 

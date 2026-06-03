@@ -4,9 +4,7 @@
 
 ## Project Overview
 
-**l06_p0s3** (Log Pose) is a "Newsroom Operating System" — an Ableton Live for journalists. It orchestrates AI agents for sourcing, research, and drafting while keeping human journalists in creative control through a Human-in-the-Loop architecture with strict source provenance.
-
-The name comes from the Log Pose in One Piece: a compass that locks onto the magnetic field of the next island, guiding navigators through the Grand Line's chaos. Similarly, l06_p0s3 locks onto the story signal and guides journalists through the chaos of information.
+**lo6** is a "Newsroom Operating System" — an Ableton Live for journalists. It orchestrates AI agents for sourcing, research, and drafting while keeping human journalists in creative control through a Human-in-the-Loop architecture with strict source provenance.
 
 ## Architecture
 
@@ -46,7 +44,7 @@ The name comes from the Log Pose in One Piece: a compass that locks onto the mag
 ## File Structure (Convention)
 
 ```
-l06_p0s3/
+lo6/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── (auth)/             # Auth group route

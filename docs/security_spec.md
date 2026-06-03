@@ -1,7 +1,7 @@
 # Security Specification (OWASP Compliance)
 
 ## Overview
-This document outlines the security measures for l06_p0s3 (Log Pose), specifically addressing the **OWASP Top 10 (2021)** vulnerabilities.
+This document outlines the security measures for lo6, specifically addressing the **OWASP Top 10 (2021)** vulnerabilities.
 
 ## OWASP Top 10 Mitigation Strategy
 

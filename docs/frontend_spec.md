@@ -1,7 +1,7 @@
 # Frontend Specification: The "Newsroom OS"
 
 ## Overview
-This document defines the frontend architecture for l06_p0s3 (Log Pose).
+This document defines the frontend architecture for lo6.
 **Design Philosophy**: "Editorial Avant-Garde" (Option C).
 **Core Experience**: A distraction-free "Reading Room" and "Writing Desk" for journalists.
 

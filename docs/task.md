@@ -1,4 +1,4 @@
-# Tasks: l06_p0s3 (Log Pose) Implementation
+# Tasks: lo6 Implementation
 
 - [x] Design Technical Architecture <!-- id: 0 -->
     - [x] Define System Context & Container Diagram

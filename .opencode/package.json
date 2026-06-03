@@ -2,7 +2,7 @@
   "private": true,
   "description": "NERV custom tools and plugins for OpenCode",
   "dependencies": {
-    "@opencode-ai/plugin": "*"
+    "@opencode-ai/plugin": "1.15.13"
   },
   "devDependencies": {
     "typescript": "^5.7.0"

@@ -1,7 +1,7 @@
 # Data Model Specification
 
 ## Overview
-This document defines the database schema for l06_p0s3 (Log Pose). We use a relational model (PostgreSQL) to ensure data integrity.
+This document defines the database schema for lo6. We use a relational model (PostgreSQL) to ensure data integrity.
 
 ## Entity Relationship Diagram (Mermaid)
 

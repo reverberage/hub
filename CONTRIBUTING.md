@@ -1,4 +1,4 @@
-# Contributing to l06_p0s3 (Log Pose)
+# Contributing to lo6
 
 First off — thank you for contributing. Whether you're a journalist, developer, or an AI agent running on someone's machine, you're welcome here.
 
@@ -12,7 +12,7 @@ git clone https://github.com/juanmanueldaza/n3rv.git ~/n3rv
 cd ~/n3rv && uv tool install .
 
 # Initialize in this project
-cd /path/to/l06_p0s3
+cd /path/to/lo6
 n3rv init
 ```
 
@@ -21,8 +21,8 @@ See `.opencode/agents/n3rv.md` for available commands, skills, and SDD agents.
 ## Quick Start
 
 ```bash
-git clone https://github.com/juanmanueldaza/l06_p0s3.git
-cd l06_p0s3
+git clone https://github.com/juanmanueldaza/lo6.git
+cd lo6
 npm install
 cp .env.example .env.local
 npm run dev
@@ -85,7 +85,7 @@ src/
 
 - **Bug reports**: Include steps to reproduce, expected behavior, and actual behavior.
 - **Feature requests**: Describe the journalist workflow it supports and the expected UX.
-- **Security vulnerabilities**: Do NOT open a public issue. Email juanmanueldaza@gmail.com with `[l06_p0s3 security]` in the subject.
+- **Security vulnerabilities**: Do NOT open a public issue. Email juanmanueldaza@gmail.com with `[lo6 security]` in the subject.
 
 ## License
 

@@ -1,7 +1,7 @@
-# Implementation Plan — l06_p0s3 (Log Pose)
+# Implementation Plan — lo6
 
 ## Goal Description
-To implement l06_p0s3 (Log Pose) — a robust, scalable "Human-in-the-Loop" media newsroom using TypeScript, React, and LangChain. The system will orchestrate multiple AI agents to source, research, write, and publish news, with distinct dashboards for human oversight.
+To implement lo6 — a robust, scalable "Human-in-the-Loop" media newsroom using TypeScript, React, and LangChain. The system will orchestrate multiple AI agents to source, research, write, and publish news, with distinct dashboards for human oversight.
 
 ## User Review Required
 > [!IMPORTANT]

@@ -1,7 +1,7 @@
 # Agentic Interface Specification
 
 ## Overview
-This document defines the **LangGraph** architecture for l06_p0s3 (Log Pose). We utilize a stateful graph approach where agents (Nodes) modify a shared state object.
+This document defines the **LangGraph** architecture for lo6. We utilize a stateful graph approach where agents (Nodes) modify a shared state object.
 
 ## Shared Graph State
 The `NewsroomState` interface defines the data passed between agents.
@@ -33,8 +33,8 @@ interface NewsroomState {
     - `RSSFetcher`: Parses RSS feeds.
     - `APIConnector`: Connects to external APIs.
     - `WebCrawler`: Scrapes and crawls websites.
-    - `SignalReceiver`: Listens for verified leads from the l06_p0s3 Network.
-    - `SignalReceiver`: Listens for verified leads from the l06_p0s3 Network.
+    - `SignalReceiver`: Listens for verified leads from the lo6 Network.
+    - `SignalReceiver`: Listens for verified leads from the lo6 Network.
     - `ConfigAgent`: Filters items based on "Interests". Scores relevance (0-100).
     - `HumanTriage`: **Interrupt Node**. Waits for user to Approve/Reject/Note.
 - **Edges**:

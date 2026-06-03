@@ -1,21 +1,19 @@
-# l06_p0s3 (Log Pose)
+# lo6
 
-![License](https://img.shields.io/github/license/juanmanueldaza/l06_p0s3?style=flat-square)
-![GitHub stars](https://img.shields.io/github/stars/juanmanueldaza/l06_p0s3?style=flat-square)
+![License](https://img.shields.io/github/license/juanmanueldaza/lo6?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/juanmanueldaza/lo6?style=flat-square)
 
 > **The Ableton Live for News** — a Newsroom Operating System that orchestrates AI agents for sourcing, research, and drafting while keeping journalists in creative control.
 
-Like the Log Pose from One Piece that locks onto the next island and guides navigators through unpredictable seas, l06_p0s3 locks onto the story and guides journalists through the chaos of information.
-
 ## Concept Preview
 
-[**→ View the visual concept**](https://juanmanueldaza.github.io/l06_p0s3/concept.html)
+[**→ View the visual concept**](https://juanmanueldaza.github.io/lo6/concept.html)
 
 A static preview of the "Editorial Avant-Garde" design system: dark mode canvas, Playfair Display serif headlines, 50/50 split-pane Reading Room with inline source provenance, floating action bars, and Focus Mode (press `Esc`). Built from `docs/frontend_spec.md`.
 
 ## Why?
 
-Journalism doesn't need another CMS — it needs a **Studio**. Current AI writing tools are black boxes that hallucinate. l06_p0s3 uses a **Human-in-the-Loop** architecture with strict provenance: every claim is visually linked to a verified source.
+Journalism doesn't need another CMS — it needs a **Studio**. Current AI writing tools are black boxes that hallucinate. lo6 uses a **Human-in-the-Loop** architecture with strict provenance: every claim is visually linked to a verified source.
 
 ## Features
 
@@ -46,8 +44,8 @@ Journalism doesn't need another CMS — it needs a **Studio**. Current AI writin
 
 ```bash
 # Clone and install
-git clone https://github.com/juanmanueldaza/l06_p0s3.git
-cd l06_p0s3
+git clone https://github.com/juanmanueldaza/lo6.git
+cd lo6
 npm install
 
 # Copy environment template
