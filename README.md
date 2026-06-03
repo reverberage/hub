@@ -7,6 +7,12 @@
 
 Like the Log Pose from One Piece that locks onto the next island and guides navigators through unpredictable seas, l06_p0s3 locks onto the story and guides journalists through the chaos of information.
 
+## Concept Preview
+
+[**→ View the visual concept**](https://juanmanueldaza.github.io/l06_p0s3/concept.html)
+
+A static preview of the "Editorial Avant-Garde" design system: dark mode canvas, Playfair Display serif headlines, 50/50 split-pane Reading Room with inline source provenance, floating action bars, and Focus Mode (press `Esc`). Built from `docs/frontend_spec.md`.
+
 ## Why?
 
 Journalism doesn't need another CMS — it needs a **Studio**. Current AI writing tools are black boxes that hallucinate. l06_p0s3 uses a **Human-in-the-Loop** architecture with strict provenance: every claim is visually linked to a verified source.
