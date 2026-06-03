@@ -1,382 +1,489 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>l06_p0s3 — Newsroom OS</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600&family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500&display=swap" rel="stylesheet">
 <style>
+  /* ═══════════════════════════════════════
+     DESIGN TOKENS
+     ═══════════════════════════════════════ */
   :root {
-    --ink: #0B0B0D;
-    --ash: #141417;
-    --paper: #FDFBF7;
-    --crimson: #CC0000;
-    --white: #FFFFFF;
+    --bg: #0B0B0D;
+    --bg-alt: #141416;
+    --text-loud: rgba(255,255,255,0.92);
+    --text-body: rgba(255,255,255,0.68);
+    --text-soft: rgba(255,255,255,0.38);
+    --text-dim: rgba(255,255,255,0.18);
     --ghost: rgba(255,255,255,0.04);
-    --dim: rgba(255,255,255,0.18);
-    --soft: rgba(255,255,255,0.38);
-    --body: rgba(255,255,255,0.68);
-    --loud: rgba(255,255,255,0.92);
+    --ghost-hover: rgba(255,255,255,0.08);
+    --rule: rgba(255,255,255,0.035);
+    --crimson: #CC0000;
+    --crimson-ghost: rgba(204,0,0,0.08);
+    --fab-bg: rgba(20,20,22,0.92);
     --sans: "Inter", system-ui, sans-serif;
     --serif: "Playfair Display", Georgia, serif;
   }
+  [data-theme="light"] {
+    --bg: #FDFBF7;
+    --bg-alt: #F5F2ED;
+    --text-loud: rgba(0,0,0,0.90);
+    --text-body: rgba(0,0,0,0.68);
+    --text-soft: rgba(0,0,0,0.40);
+    --text-dim: rgba(0,0,0,0.22);
+    --ghost: rgba(0,0,0,0.04);
+    --ghost-hover: rgba(0,0,0,0.07);
+    --rule: rgba(0,0,0,0.08);
+    --fab-bg: rgba(245,242,237,0.95);
+  }
+
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
   html { font-size:16px; -webkit-font-smoothing:antialiased; }
   body {
-    background: var(--ink); color: var(--body); font-family: var(--sans);
+    background: var(--bg); color: var(--text-body); font-family: var(--sans);
     font-weight: 300; line-height: 1.5; height: 100dvh; overflow: hidden;
-    display: flex;
+    display: flex; transition: background 0.5s, color 0.5s;
   }
 
-  /* ══════════════════════════════════════════
-     WATERMARK — bleeds across all views
-     ══════════════════════════════════════════ */
-  .watermark {
-    position: fixed; top: -12vh; left: -6vw; z-index: 0; pointer-events: none;
-    font-family: var(--serif); font-size: clamp(160px, 24vw, 380px); font-weight: 900;
-    color: rgba(255,255,255,0.012); letter-spacing: -0.02em; line-height: 0.85;
-    white-space: nowrap; user-select: none;
-    transform: rotate(-2deg);
-    animation: watermark-drift 80s linear infinite;
-  }
-  @keyframes watermark-drift {
-    0% { transform: rotate(-2deg) translateX(0); }
-    50% { transform: rotate(-1.5deg) translateX(30px); }
-    100% { transform: rotate(-2deg) translateX(0); }
-  }
-
-  /* ══════════════════════════════════════════
-     SIDEBAR — magazine spine, no borders
-     ══════════════════════════════════════════ */
+  /* ═══════════════════════════════════════
+     SPINE — magazine spine
+     ═══════════════════════════════════════ */
   .spine {
     width: 88px; display: flex; flex-direction: column; align-items: center;
-    padding: 28px 0 20px; z-index: 1; position: relative;
+    padding: 28px 0 20px; z-index: 1; position: relative; flex-shrink:0;
   }
   .spine .logomark {
     font-family: var(--serif); font-size: 22px; font-weight: 900; color: var(--crimson);
-    margin-bottom: 48px; letter-spacing: -0.02em; user-select: none;
-    opacity: 0.92; transition: opacity 0.4s;
+    margin-bottom: 40px; letter-spacing: -0.02em; user-select: none; opacity: 0.92;
   }
   .spine .tab {
     width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-    margin-bottom: 4px; cursor: pointer;
+    margin-bottom: 4px; cursor: pointer; border-radius: 0;
     font-family: var(--sans); font-size: 10px; font-weight: 600;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--dim); transition: color 0.2s, background 0.2s;
+    color: var(--text-dim); transition: color 0.2s;
   }
-  .spine .tab:hover { color: var(--soft); }
+  .spine .tab:hover { color: var(--text-soft); }
   .spine .tab.active { color: var(--crimson); }
+  .spine .theme-toggle {
+    margin-top: auto; width: 44px; height: 44px; display: flex;
+    align-items: center; justify-content: center; cursor: pointer;
+    font-size: 14px; color: var(--text-dim); transition: color 0.2s;
+  }
+  .spine .theme-toggle:hover { color: var(--text-soft); }
 
-  /* ══════════════════════════════════════════
+  /* ═══════════════════════════════════════
      MAIN AREA
-     ══════════════════════════════════════════ */
-  .stage { flex:1; display:flex; flex-direction:column; z-index:1; position:relative; overflow:hidden; }
+     ═══════════════════════════════════════ */
+  .stage { flex:1; display:flex; flex-direction:column; z-index:1; overflow:hidden; }
 
-  /* ══════════════════════════════════════════
-     TOP RAIL — thin, minimal
-     ══════════════════════════════════════════ */
+  /* ── TOP RAIL ── */
   .rail {
     padding: 28px 48px 0; display:flex; justify-content:space-between; align-items:flex-end;
-    min-height: 72px; user-select:none;
+    min-height: 72px; user-select:none; flex-shrink:0;
   }
   .rail .view-title {
     font-family: var(--serif); font-size: 36px; font-weight: 500;
-    color: var(--loud); letter-spacing: -0.01em; line-height: 1;
+    color: var(--text-loud); letter-spacing: -0.01em; line-height: 1;
   }
   .rail .view-sub {
     font-family: var(--sans); font-size: 9px; font-weight: 600;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim);
     margin-left: 8px; vertical-align: super;
   }
   .rail .focus-btn {
     font-family: var(--sans); font-size: 9px; font-weight: 600;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--dim); cursor: pointer; padding: 6px 0;
+    color: var(--text-dim); cursor: pointer; padding: 6px 0;
     transition: color 0.25s;
   }
-  .rail .focus-btn:hover { color: var(--soft); }
+  .rail .focus-btn:hover { color: var(--text-soft); }
   .rail .focus-btn.on { color: var(--crimson); }
 
-  /* ══════════════════════════════════════════
-     VIEWS CONTAINER
-     ══════════════════════════════════════════ */
+  /* ── VIEWS CONTAINER ── */
   .views { flex:1; overflow:hidden; position:relative; }
 
-  /* ─── READING ROOM ─── */
+  /* ═══════════════════════════════════════
+     T — READING ROOM
+     ═══════════════════════════════════════ */
   .reading-room { display:flex; height:100%; }
-
-  /* Feed pane — narrower */
   .feed {
     width: 520px; flex-shrink:0; overflow-y:auto; padding: 16px 48px 100px 48px;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
   .feed .kicker {
     font-family: var(--sans); font-size: 8px; font-weight: 600;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim);
     margin-bottom: 32px; margin-top: 8px;
   }
   .feed .lead {
-    padding: 24px 0; cursor: pointer; position: relative;
-    transition: opacity 0.25s;
+    padding: 24px 0; cursor: pointer; position: relative; transition: opacity 0.25s;
   }
   .feed .lead:hover { opacity: 0.85; }
   .feed .lead .sig {
     font-family: var(--sans); font-size: 8px; font-weight: 600;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim);
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
     margin-bottom: 8px; display: flex; gap: 10px;
   }
-  .feed .lead .sig .conf { color: var(--soft); }
+  .feed .lead .sig .conf { color: var(--text-soft); }
   .feed .lead h3 {
     font-family: var(--serif); font-size: 20px; font-weight: 500;
-    color: var(--body); line-height: 1.25; margin-bottom: 6px;
-    transition: color 0.25s;
+    color: var(--text-body); line-height: 1.25; margin-bottom: 6px; transition: color 0.25s;
   }
-  .feed .lead .by {
-    font-family: var(--sans); font-size: 10px; color: var(--dim); letter-spacing: 0.02em;
-  }
-
-  /* Selected lead */
-  .feed .lead.active { padding: 24px 32px; margin: 0 -32px; }
-  .feed .lead.active h3 { color: var(--loud); font-size: 21px; }
+  .feed .lead .by { font-family: var(--sans); font-size: 10px; color: var(--text-dim); }
+  .feed .lead.active { padding: 24px 32px; margin: 0 -32px; background: var(--ghost); }
+  .feed .lead.active h3 { color: var(--text-loud); font-size: 21px; }
   .feed .lead.active::before {
     content: "→"; position: absolute; left: 8px; top: 28px;
     font-family: var(--serif); font-size: 18px; color: var(--crimson);
   }
-  .feed .divider {
-    height: 1px; background: rgba(255,255,255,0.035); margin: 8px -48px;
-  }
+  .feed .divider { height: 1px; background: var(--rule); margin: 8px -48px; }
 
-  /* Source pane — wider, magazine spread */
   .source {
     flex:1; overflow-y:auto; padding: 40px 72px 100px 56px;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
   .source .src-url {
     font-family: var(--sans); font-size: 9px; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim);
-    margin-bottom: 32px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 32px;
   }
   .source .src-url em { font-style:normal; color: var(--crimson); }
   .source h1 {
     font-family: var(--serif); font-size: 48px; font-weight: 700;
-    color: var(--loud); line-height: 1.08; letter-spacing: -0.015em;
-    margin-bottom: 20px;
+    color: var(--text-loud); line-height: 1.08; letter-spacing: -0.015em; margin-bottom: 20px;
   }
   .source .deck {
     font-family: var(--serif); font-size: 20px; font-weight: 400; font-style: italic;
-    color: var(--soft); line-height: 1.45; margin-bottom: 40px;
+    color: var(--text-soft); line-height: 1.45; margin-bottom: 40px;
   }
   .source .byline {
-    font-family: var(--sans); font-size: 10px; color: var(--dim);
-    letter-spacing: 0.04em; margin-bottom: 44px;
+    font-family: var(--sans); font-size: 10px; color: var(--text-dim); margin-bottom: 44px;
   }
-  .source p {
-    font-family: var(--serif); font-size: 17px; line-height: 1.8; color: var(--body);
-    margin-bottom: 20px;
-  }
-  .source p em.mark {
-    font-style:normal; color: var(--crimson); font-weight: 500;
-    background: rgba(204,0,0,0.08); padding: 1px 4px;
-  }
+  .source p { font-family: var(--serif); font-size: 17px; line-height: 1.8; color: var(--text-body); margin-bottom: 20px; }
+  .source p em.mark { font-style:normal; color: var(--crimson); font-weight: 500; background: var(--crimson-ghost); padding: 1px 4px; }
   .source .footnote {
-    margin-top: 48px; padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    font-family: var(--sans); font-size: 10px; color: var(--dim);
-    letter-spacing: 0.02em; line-height: 1.6;
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 10px; color: var(--text-dim); line-height: 1.6;
   }
   .source .footnote .verified {
-    color: var(--crimson); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 9px;
+    color: var(--crimson); font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; font-size: 9px;
   }
 
-  /* ─── WRITING DESK ─── */
+  /* ═══════════════════════════════════════
+     W — WRITING DESK
+     ═══════════════════════════════════════ */
   .writing-desk { display:none; height:100%; }
-  .writing-desk .col-outline {
-    width: 240px; padding: 40px 32px 40px 48px; overflow-y:auto;
-    font-family: var(--sans); font-size: 11px; color: var(--dim); letter-spacing: 0.03em;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+  .col-outline {
+    width: 240px; padding: 40px 32px 40px 48px; overflow-y:auto; flex-shrink:0;
+    font-family: var(--sans); font-size: 11px; color: var(--text-dim); letter-spacing: 0.03em;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
-  .writing-desk .col-outline .chap {
-    margin-bottom: 14px; line-height: 1.5; cursor: pointer; transition: color 0.2s;
-  }
-  .writing-desk .col-outline .chap:hover { color: var(--soft); }
-  .writing-desk .col-outline .chap.active { color: var(--crimson); font-weight: 600; }
-  .writing-desk .col-paper {
+  .col-outline .chap { margin-bottom: 14px; line-height: 1.5; cursor: pointer; transition: color 0.2s; }
+  .col-outline .chap:hover { color: var(--text-soft); }
+  .col-outline .chap.active { color: var(--crimson); font-weight: 600; }
+  .col-paper {
     flex:1; padding: 40px 80px 100px 48px; overflow-y:auto;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
-  .writing-desk .col-paper h2 {
+  .col-paper h2 {
     font-family: var(--serif); font-size: 42px; font-weight: 700;
-    color: var(--loud); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 32px;
+    color: var(--text-loud); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 32px;
   }
-  .writing-desk .col-paper .graf {
-    font-family: var(--serif); font-size: 17px; line-height: 1.85; color: var(--body);
-    margin-bottom: 18px; position:relative;
+  .col-paper .graf {
+    font-family: var(--serif); font-size: 17px; line-height: 1.85; color: var(--text-body); margin-bottom: 18px;
   }
-  .writing-desk .col-paper .graf.focus {
-    color: var(--body); 
-  }
-  .writing-desk .col-paper .graf .cursor {
+  .col-paper .graf .cursor {
     display:inline-block; width:2px; height:18px; background:var(--crimson);
-    vertical-align: text-bottom; margin-left: 2px;
-    animation: blink 1.2s step-end infinite;
+    vertical-align: text-bottom; margin-left: 2px; animation: blink 1.2s step-end infinite;
   }
   @keyframes blink { 50% { opacity:0; } }
-  .writing-desk .col-research {
-    width: 300px; padding: 40px 48px 40px 0; overflow-y:auto;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent;
+  .col-research {
+    width: 300px; padding: 40px 48px 40px 0; overflow-y:auto; flex-shrink:0;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
-  .writing-desk .col-research .card {
+  .col-research .card {
     padding: 16px; margin-bottom: 12px;
-    font-family: var(--sans); font-size: 11px; color: var(--dim);
-    letter-spacing: 0.02em; line-height: 1.5; cursor: grab;
-    transition: background 0.2s, color 0.2s;
+    font-family: var(--sans); font-size: 11px; color: var(--text-dim); line-height: 1.5;
+    cursor: grab; transition: color 0.2s;
   }
-  .writing-desk .col-research .card:hover { color: var(--soft); }
-  .writing-desk .col-research .card .tag {
+  .col-research .card:hover { color: var(--text-soft); }
+  .col-research .card .tag {
     font-size: 8px; font-weight: 600; letter-spacing: 0.12em;
     text-transform: uppercase; margin-bottom: 6px; display:block;
   }
-  .writing-desk .col-research .card.fact .tag { color: var(--crimson); }
-  .writing-desk .col-research .card.quote .tag { color: var(--soft); }
-  .writing-desk .col-research .card.time .tag { color: var(--dim); }
+  .col-research .card.fact .tag { color: var(--crimson); }
+  .col-research .card.quote .tag { color: var(--text-soft); }
+  .col-research .card.time .tag { color: var(--text-dim); }
 
-  /* ─── PLACEHOLDER VIEWS ─── */
-  .void { display:none; height:100%; align-items:center; justify-content:center; flex-direction:column; }
-  .void .big {
-    font-family: var(--serif); font-size: 64px; font-weight: 700;
-    color: var(--loud); line-height: 1; letter-spacing: -0.02em; margin-bottom: 12px;
+  /* ═══════════════════════════════════════
+     R — RESEARCH DESK
+     ═══════════════════════════════════════ */
+  .research-desk { display:none; height:100%; }
+  .rd-queries {
+    width: 340px; padding: 32px 32px 80px 48px; overflow-y:auto; flex-shrink:0;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
   }
-  .void .sub {
-    font-family: var(--sans); font-size: 10px; font-weight: 600;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+  .rd-queries .q {
+    padding: 18px 0; cursor: pointer; transition: opacity 0.2s;
+    border-bottom: 1px solid var(--rule);
+  }
+  .rd-queries .q:hover { opacity: 0.85; }
+  .rd-queries .q .status { font-size: 8px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+  .rd-queries .q .status.running { color: var(--crimson); }
+  .rd-queries .q .status.done { color: var(--text-soft); }
+  .rd-queries .q .status.queued { color: var(--text-dim); }
+  .rd-queries .q h3 { font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--text-body); line-height: 1.3; margin-bottom: 4px; }
+  .rd-queries .q .meta { font-family: var(--sans); font-size: 9px; color: var(--text-dim); }
+  .rd-queries .q.active { padding: 18px 24px; margin: 0 -24px; background: var(--ghost); }
+  .rd-queries .q.active h3 { color: var(--text-loud); }
+
+  .rd-results {
+    flex:1; padding: 32px 56px 80px 40px; overflow-y:auto;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
+  }
+  .rd-results h2 {
+    font-family: var(--serif); font-size: 36px; font-weight: 700;
+    color: var(--text-loud); line-height: 1.1; margin-bottom: 8px;
+  }
+  .rd-results .q-label {
+    font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 32px;
+  }
+  .rd-results .src {
+    padding: 12px 0; border-bottom: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 10px; color: var(--text-dim);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .rd-results .src .url { color: var(--text-body); }
+  .rd-results .src .badge {
+    font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px;
+  }
+  .rd-results .src .badge.crawled { color: var(--crimson); }
+  .rd-results .src .badge.pending { color: var(--text-dim); }
+
+  .rd-facts {
+    width: 320px; padding: 32px 48px 80px 0; overflow-y:auto; flex-shrink:0;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
+  }
+  .rd-facts .fact-item {
+    padding: 14px 0; border-bottom: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 10px; color: var(--text-body); line-height: 1.5;
+  }
+  .rd-facts .fact-item .conf {
+    font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--crimson); margin-bottom: 4px; display: block;
   }
 
-  /* ══════════════════════════════════════════
+  /* ═══════════════════════════════════════
+     S — SIGNAL EXCHANGE
+     ═══════════════════════════════════════ */
+  .signal-exchange { display:none; height:100%; padding: 32px 48px 80px; overflow-y:auto;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
+  }
+  .se-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+  }
+  .se-node {
+    padding: 22px; background: var(--ghost); transition: background 0.2s;
+  }
+  .se-node:hover { background: var(--ghost-hover); }
+  .se-node .node-name {
+    font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--text-loud); margin-bottom: 4px;
+  }
+  .se-node .node-url {
+    font-family: var(--sans); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-bottom: 12px;
+  }
+  .se-node .node-stat {
+    font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 6px; display: flex; gap: 20px;
+  }
+  .se-node .node-stat span { color: var(--text-soft); }
+  .se-node .node-stat .online { color: var(--crimson); }
+  .se-node .node-stat .offline { color: var(--text-dim); }
+  .se-node .shared {
+    margin-top: 12px; font-family: var(--serif); font-size: 13px; color: var(--text-body);
+    font-style: italic; line-height: 1.4;
+  }
+
+  /* ═══════════════════════════════════════
+     E — EDITORIAL REVIEW
+     ═══════════════════════════════════════ */
+  .editorial-review { display:none; height:100%; }
+  .er-queue {
+    width: 480px; padding: 32px 32px 80px 48px; overflow-y:auto; flex-shrink:0;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
+  }
+  .er-item {
+    padding: 20px 0; border-bottom: 1px solid var(--rule); cursor: pointer; transition: opacity 0.2s;
+  }
+  .er-item:hover { opacity: 0.85; }
+  .er-item .er-status {
+    font-size: 8px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .er-item .er-status.pending { color: var(--text-dim); }
+  .er-item .er-status.approved { color: var(--crimson); }
+  .er-item .er-status.rejected { color: var(--text-soft); }
+  .er-item h3 {
+    font-family: var(--serif); font-size: 17px; font-weight: 500; color: var(--text-body); line-height: 1.3; margin-bottom: 4px;
+  }
+  .er-item .er-author { font-family: var(--sans); font-size: 9px; color: var(--text-dim); }
+  .er-item.active { padding: 20px 28px; margin: 0 -28px; background: var(--ghost); }
+  .er-item.active h3 { color: var(--text-loud); }
+
+  .er-detail {
+    flex:1; padding: 32px 72px 80px 48px; overflow-y:auto;
+    scrollbar-width: thin; scrollbar-color: var(--text-dim) transparent;
+  }
+  .er-detail .er-draft {
+    font-family: var(--serif); font-size: 16px; line-height: 1.8; color: var(--text-body);
+  }
+  .er-detail .er-draft h2 {
+    font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--text-loud);
+    line-height: 1.15; margin-bottom: 28px;
+  }
+  .er-detail .er-notes {
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 10px; color: var(--text-dim); line-height: 1.6;
+  }
+  .er-detail .er-notes .from { color: var(--crimson); font-weight: 600; }
+  .er-actions { margin-top:28px; display:flex; gap:12px; }
+  .er-actions button {
+    font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--rule);
+    background: none; color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+  }
+  .er-actions button:hover { color: var(--text-soft); border-color: var(--text-dim); }
+  .er-actions button.approve { color: var(--crimson); border-color: var(--crimson); }
+  .er-actions button.approve:hover { background: var(--crimson-ghost); }
+
+  /* ═══════════════════════════════════════
      FLOATING ACTION BAR
-     ══════════════════════════════════════════ */
+     ═══════════════════════════════════════ */
   .fab {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
     display: flex; gap: 2px; z-index: 10;
-    transition: opacity 0.35s, transform 0.35s;
+    background: var(--fab-bg); backdrop-filter: blur(12px);
+    padding: 6px 10px; transition: opacity 0.35s, transform 0.35s;
   }
   .fab.hidden { opacity:0; transform: translateX(-50%) translateY(20px); pointer-events:none; }
   .fab button {
-    padding: 10px 22px; font-family: var(--sans); font-size: 10px; font-weight: 600;
+    padding: 8px 18px; font-family: var(--sans); font-size: 10px; font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
-    border: none; background: none; color: var(--dim);
+    border: none; background: none; color: var(--text-dim);
     cursor: pointer; transition: color 0.2s;
   }
-  .fab button:hover { color: var(--soft); }
+  .fab button:hover { color: var(--text-soft); }
   .fab button.prime { color: var(--crimson); }
 
-  /* ══════════════════════════════════════════
+  /* ═══════════════════════════════════════
      STATUS BAR
-     ══════════════════════════════════════════ */
+     ═══════════════════════════════════════ */
   .stat {
     position: fixed; bottom: 14px; right: 28px; z-index: 10;
     font-family: var(--sans); font-size: 9px; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim);
   }
-  .stat a { color: var(--dim); text-decoration: none; }
-  .stat a:hover { color: var(--soft); }
+  .stat a { color: var(--text-dim); text-decoration: none; }
+  .stat a:hover { color: var(--text-soft); }
   .stat .pulse { color: var(--crimson); animation: pulse 2.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* ══════════════════════════════════════════
-     FOCUS MODE — hides everything but content
-     ══════════════════════════════════════════ */
+  /* ═══════════════════════════════════════
+     FOCUS MODE
+     ═══════════════════════════════════════ */
   body.focus .spine { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
   body.focus .rail { opacity:0; min-height:0; height:0; overflow:hidden; transition:opacity 0.5s; }
   body.focus .feed { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
   body.focus .source { padding: 48px 120px 100px 120px; }
-  body.focus .watermark { opacity:0.3; }
-  /* Writing Desk focus — hide outline + research, expand paper */
   body.focus .col-outline { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
   body.focus .col-research { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
   body.focus .col-paper { padding: 48px 160px 100px 160px; }
-  /* Hide chrome in focus */
+  body.focus .rd-queries { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
+  body.focus .rd-facts { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
+  body.focus .rd-results { padding: 48px 120px 100px 120px; }
+  body.focus .er-queue { opacity:0; width:0; overflow:hidden; transition:opacity 0.5s, width 0.5s; }
+  body.focus .er-detail { padding: 48px 160px 100px 160px; }
+  body.focus .signal-exchange { padding: 48px 160px 100px 160px; }
   body.focus .fab { opacity:0; pointer-events:none; transition:opacity 0.4s; }
   body.focus .stat { opacity:0; transition:opacity 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .feed { width: 380px; padding: 16px 28px 100px 28px; }
+    .source { padding: 32px 40px 100px 36px; }
+    .source h1 { font-size: 34px; }
+    .col-outline { width: 180px; padding-left: 28px; }
+    .col-paper { padding: 32px 40px 80px 28px; }
+    .col-research { width: 240px; padding-right: 28px; }
+    .rd-queries { width: 260px; padding-left: 28px; }
+    .rd-results { padding: 32px 36px 80px 24px; }
+    .rd-facts { width: 240px; padding-right: 28px; }
+    .er-queue { width: 340px; padding-left: 28px; }
+    .er-detail { padding: 32px 40px 80px 32px; }
+    .se-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  }
 </style>
 </head>
 <body>
 
-<!-- WATERMARK -->
-<div class="watermark">L06_P0S3</div>
-
 <!-- SPINE -->
 <nav class="spine">
   <div class="logomark">l06</div>
-  <div class="tab active" data-view="triage">T</div>
-  <div class="tab" data-view="editor">W</div>
-  <div class="tab" data-view="research">R</div>
-  <div class="tab" data-view="signals">S</div>
-  <div class="tab" data-view="review">E</div>
+  <div class="tab active" data-view="triage" data-key="1">T</div>
+  <div class="tab" data-view="editor" data-key="2">W</div>
+  <div class="tab" data-view="research" data-key="3">R</div>
+  <div class="tab" data-view="signals" data-key="4">S</div>
+  <div class="tab" data-view="review" data-key="5">E</div>
+  <div class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">◐</div>
 </nav>
 
 <!-- STAGE -->
 <div class="stage">
-  <!-- RAIL -->
   <div class="rail">
-    <div><span class="view-title" id="viewLabel">Reading Room</span><span class="view-sub">Pipeline</span></div>
+    <div><span class="view-title" id="viewLabel">Reading Room</span><span class="view-sub" id="viewSub">Pipeline</span></div>
     <span class="focus-btn" id="focusToggle">Focus</span>
   </div>
 
-  <!-- VIEWS -->
   <div class="views">
-    <!-- READING ROOM -->
+
+    <!-- ═══ T — READING ROOM ═══ -->
     <div class="reading-room" id="v-triage">
       <div class="feed">
         <div class="kicker">Lead Pipeline · 5 active</div>
-
-        <div class="lead active">
+        <div class="lead active" data-article="0">
           <div class="sig"><span>Reuters Institute</span><span class="conf">92%</span></div>
           <h3>AI-generated content is drowning local newsrooms — and they don't have the tools to fight back</h3>
           <div class="by">4 hours ago · 12,400 views</div>
         </div>
-
-        <div class="lead">
+        <div class="lead" data-article="1">
           <div class="sig"><span>Nieman Lab</span><span class="conf">87%</span></div>
           <h3>The quiet collapse of fact-checking departments across European media</h3>
           <div class="by">7 hours ago · 8,200 views</div>
         </div>
-
-        <div class="lead">
+        <div class="lead" data-article="2">
           <div class="sig"><span>The Verge</span><span class="conf">94%</span></div>
           <h3>OpenAI removes journalist protections from enterprise contracts — no public announcement</h3>
           <div class="by">11 hours ago · 31,000 views</div>
         </div>
-
-        <div class="lead">
+        <div class="lead" data-article="3">
           <div class="sig"><span>Bloomberg</span><span class="conf">71%</span></div>
           <h3>News Corp signs exclusive AI training deal — terms remain undisclosed</h3>
           <div class="by">14 hours ago · 9,800 views</div>
         </div>
-
         <div class="kicker" style="margin-top:32px">Monitored · Snoozed</div>
-
-        <div class="lead">
+        <div class="lead" data-article="4">
           <div class="sig"><span>TechCrunch</span><span class="conf">—</span></div>
           <h3>EU AI Act enforcement mechanisms remain unfunded two years after passage</h3>
           <div class="by">2 days ago · 4,100 views</div>
         </div>
       </div>
-
-      <div class="source">
-        <div class="src-url"><em>▸</em> reutersinstitute.politics.ox.ac.uk</div>
-        <h1>AI-generated content is drowning local newsrooms — and they don't have the tools to fight back</h1>
-        <div class="deck">A survey of 200 European and North American newsrooms reveals editors spend more time debunking AI slop than producing original journalism. The tools haven't caught up.</div>
-        <div class="byline">Reuters Institute for the Study of Journalism · June 2, 2026</div>
-        <p>A new survey of 200 local newsrooms across Europe and North America reveals a stark reality: 68% of editors report spending more time <em class="mark">verifying AI-generated content</em> than producing original reporting. The tools they use — basic reverse image search, manual source tracing — were designed for a pre-generative-AI era.</p>
-        <p>"We're fighting machines with spreadsheets," said one editor at a mid-size German regional paper with 14 journalists covering a population of 400,000. "The AI slop arrives faster than we can debunk it. Last week we had to retract a story because a fabricated press release fooled two editors before anyone checked the source."</p>
-        <p>The report identifies a critical gap: while large national newsrooms have adopted AI verification tools, local outlets — which produce the majority of original reporting in most countries — lack the budget, training, and infrastructure to do the same. <em class="mark">The result is an asymmetric information war with no front line.</em></p>
-        <div class="footnote">
-          <span class="verified">● Verified</span> &nbsp;·&nbsp; Original article published June 2, 2026 on reutersinstitute.politics.ox.ac.uk &nbsp;·&nbsp; Crawled at 08:14 UTC &nbsp;·&nbsp; 4 corroborating sources &nbsp;·&nbsp; No conflicting claims detected.
-        </div>
-      </div>
+      <div class="source" id="sourcePane"></div>
     </div>
 
-    <!-- WRITING DESK -->
+    <!-- ═══ W — WRITING DESK ═══ -->
     <div class="writing-desk" id="v-editor" style="display:none">
       <div class="col-outline">
         <div class="chap active">1. The Asymmetry Problem</div>
@@ -399,23 +506,140 @@
       </div>
     </div>
 
-    <!-- RESEARCH DESK -->
-    <div class="void" id="v-research">
-      <div class="big">Research Desk</div>
-      <div class="sub">Fact-gathering in progress</div>
+    <!-- ═══ R — RESEARCH DESK ═══ -->
+    <div class="research-desk" id="v-research" style="display:none">
+      <div class="rd-queries">
+        <div class="q active">
+          <div class="status running">● Running</div>
+          <h3>Verify OpenAI enterprise contract changes regarding journalist protections</h3>
+          <div class="meta">12 sources queued · 4 crawled · 3 facts extracted</div>
+        </div>
+        <div class="q">
+          <div class="status running">● Running</div>
+          <h3>Cross-reference EU AI Act funding across 27 member states</h3>
+          <div class="meta">27 sources queued · 18 crawled · 11 facts extracted</div>
+        </div>
+        <div class="q">
+          <div class="status done">✓ Complete</div>
+          <h3>News Corp AI deal: verify terms and scope</h3>
+          <div class="meta">8 sources · 6 facts · report ready</div>
+        </div>
+        <div class="q">
+          <div class="status queued">○ Queued</div>
+          <h3>Fact-checking department headcount across top 50 European publishers</h3>
+          <div class="meta">50 sources queued · pending</div>
+        </div>
+        <div class="q">
+          <div class="status queued">○ Queued</div>
+          <h3>Trace provenance of viral AI-generated image: Macron at Davos</h3>
+          <div class="meta">Reverse image search + metadata analysis</div>
+        </div>
+      </div>
+      <div class="rd-results">
+        <h2>Verify OpenAI Contract</h2>
+        <div class="q-label">Research in progress · 4 of 12 sources crawled</div>
+        <div class="src"><span class="url">theverge.com/openai-enterprise-contracts-2026</span><span class="badge crawled">Crawled</span></div>
+        <div class="src"><span class="url">wired.com/story/openai-quietly-removes-journalist-clause</span><span class="badge crawled">Crawled</span></div>
+        <div class="src"><span class="url">techcrunch.com/openai-enterprise-terms-update</span><span class="badge crawled">Crawled</span></div>
+        <div class="src"><span class="url">arstechnica.com/openai-contract-analysis</span><span class="badge crawled">Crawled</span></div>
+        <div class="src"><span class="url">wsj.com/openai-enterprise-contracts-source</span><span class="badge pending">Pending</span></div>
+        <div class="src"><span class="url">ft.com/openai-terms-journalism-impact</span><span class="badge pending">Pending</span></div>
+        <div class="src"><span class="url">niemanlab.org/openai-publisher-deals-2026</span><span class="badge pending">Pending</span></div>
+      </div>
+      <div class="rd-facts">
+        <div class="fact-item">
+          <span class="conf">94% confidence</span>
+          OpenAI enterprise contract updated May 2026 — journalist protection clause removed in section 4.3
+        </div>
+        <div class="fact-item">
+          <span class="conf">87% confidence</span>
+          Clause previously guaranteed: "OpenAI will not use journalist content for model training without explicit opt-in"
+        </div>
+        <div class="fact-item">
+          <span class="conf">71% confidence</span>
+          At least 3 major publishers affected: Condé Nast, News Corp, Axel Springer — all have existing enterprise agreements
+        </div>
+        <div class="fact-item">
+          <span class="conf">62% confidence</span>
+          Internal memo circulated to enterprise customers on May 14 — not publicly announced until The Verge report
+        </div>
+      </div>
     </div>
 
-    <!-- SIGNAL EXCHANGE -->
-    <div class="void" id="v-signals">
-      <div class="big">Signal Exchange</div>
-      <div class="sub">3 federated sources online</div>
+    <!-- ═══ S — SIGNAL EXCHANGE ═══ -->
+    <div class="signal-exchange" id="v-signals" style="display:none">
+      <div class="se-grid">
+        <div class="se-node">
+          <div class="node-name">Der Spiegel</div>
+          <div class="node-url">spiegel.de/signal</div>
+          <div class="node-stat"><span class="online">● Online</span><span>Trust: 0.94</span><span>12 leads</span></div>
+          <div class="shared">"EU AI Act enforcement gap — our Berlin bureau confirms funding shortfall across 14 member states"</div>
+        </div>
+        <div class="se-node">
+          <div class="node-name">The Guardian</div>
+          <div class="node-url">theguardian.com/signal</div>
+          <div class="node-stat"><span class="online">● Online</span><span>Trust: 0.91</span><span>8 leads</span></div>
+          <div class="shared">"OpenAI clause removal affects UK publishers differently — negotiating separate terms"</div>
+        </div>
+        <div class="se-node">
+          <div class="node-name">El País</div>
+          <div class="node-url">elpais.com/signal</div>
+          <div class="node-stat"><span class="online">● Online</span><span>Trust: 0.88</span><span>5 leads</span></div>
+          <div class="shared">"Spanish media regulator opens inquiry into AI-generated content labeling practices"</div>
+        </div>
+        <div class="se-node">
+          <div class="node-name">Le Monde</div>
+          <div class="node-url">lemonde.fr/signal</div>
+          <div class="node-stat"><span class="offline">○ Syncing</span><span>Trust: 0.85</span><span>3 leads</span></div>
+          <div class="shared">"French Senate proposes mandatory AI watermarking — vote scheduled September 2026"</div>
+        </div>
+        <div class="se-node">
+          <div class="node-name">Reuters</div>
+          <div class="node-url">reuters.com/signal</div>
+          <div class="node-stat"><span class="online">● Online</span><span>Trust: 0.96</span><span>19 leads</span></div>
+          <div class="shared">"Global survey: 72% of news consumers cannot distinguish AI-generated from human-written news"</div>
+        </div>
+        <div class="se-node">
+          <div class="node-name">ProPublica</div>
+          <div class="node-url">propublica.org/signal</div>
+          <div class="node-stat"><span class="online">● Online</span><span>Trust: 0.93</span><span>7 leads</span></div>
+          <div class="shared">"Investigation: AI training data includes copyrighted news articles without permission in 8 of 10 major models"</div>
+        </div>
+      </div>
     </div>
 
-    <!-- EDITORIAL REVIEW -->
-    <div class="void" id="v-review">
-      <div class="big">Editorial Review</div>
-      <div class="sub">Awaiting human sign-off</div>
+    <!-- ═══ E — EDITORIAL REVIEW ═══ -->
+    <div class="editorial-review" id="v-review" style="display:none">
+      <div class="er-queue">
+        <div class="er-item active" data-review="0">
+          <div class="er-status pending">Pending Review</div>
+          <h3>AI-generated content is drowning local newsrooms</h3>
+          <div class="er-author">Sarah Chen · Draft v3 · 1,240 words · 2h ago</div>
+        </div>
+        <div class="er-item" data-review="1">
+          <div class="er-status pending">Pending Review</div>
+          <h3>The quiet collapse of fact-checking departments</h3>
+          <div class="er-author">Marcus Webb · Draft v2 · 980 words · 5h ago</div>
+        </div>
+        <div class="er-item" data-review="2">
+          <div class="er-status approved">✓ Approved</div>
+          <h3>OpenAI removes journalist protections — what we know</h3>
+          <div class="er-author">Elena Rossi · Draft v4 · 1,520 words · 8h ago</div>
+        </div>
+        <div class="er-item" data-review="3">
+          <div class="er-status pending">Pending Review</div>
+          <h3>News Corp AI deal: the undisclosed terms</h3>
+          <div class="er-author">David Park · Draft v1 · 740 words · 12h ago</div>
+        </div>
+        <div class="er-item" data-review="4">
+          <div class="er-status rejected">✗ Rejected</div>
+          <h3>EU AI Act: two years and still no teeth</h3>
+          <div class="er-author">Ana Kowalski · Draft v2 · 1,100 words · 1d ago</div>
+        </div>
+      </div>
+      <div class="er-detail" id="erDetail"></div>
     </div>
+
   </div>
 </div>
 
@@ -431,65 +655,161 @@
 <div class="stat">l06_p0s3 <span class="pulse">●</span> &nbsp;<a href="https://github.com/juanmanueldaza/l06_p0s3">github</a></div>
 
 <script>
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+const articles = [
+  { url:'reutersinstitute.politics.ox.ac.uk', title:'AI-generated content is drowning local newsrooms — and they don\'t have the tools to fight back', deck:'A survey of 200 European and North American newsrooms reveals editors spend more time debunking AI slop than producing original journalism. The tools haven\'t caught up.', byline:'Reuters Institute for the Study of Journalism · June 2, 2026', body:'<p>A new survey of 200 local newsrooms across Europe and North America reveals a stark reality: 68% of editors report spending more time <em class="mark">verifying AI-generated content</em> than producing original reporting. The tools they use — basic reverse image search, manual source tracing — were designed for a pre-generative-AI era.</p><p>"We\'re fighting machines with spreadsheets," said one editor at a mid-size German regional paper with 14 journalists covering a population of 400,000. "The AI slop arrives faster than we can debunk it. Last week we had to retract a story because a fabricated press release fooled two editors before anyone checked the source."</p><p>The report identifies a critical gap: while large national newsrooms have adopted AI verification tools, local outlets — which produce the majority of original reporting in most countries — lack the budget, training, and infrastructure to do the same. <em class="mark">The result is an asymmetric information war with no front line.</em></p>', footnote:'<span class="verified">● Verified</span> · Original article published June 2, 2026 on reutersinstitute.politics.ox.ac.uk · Crawled at 08:14 UTC · 4 corroborating sources · No conflicting claims detected.' },
+  { url:'niemanlab.org', title:'The quiet collapse of fact-checking departments across European media', deck:'Twenty-three fact-checking units have closed or downsized in the past 18 months. The ones that remain are underfunded and understaffed.', byline:'Nieman Journalism Lab · June 1, 2026', body:'<p>Since January 2025, twenty-three fact-checking departments at European news organizations have closed or reduced their staff by more than half. The pattern is consistent: as newsrooms invest in AI tools for production, they <em class="mark">divert resources away from verification</em> — the exact opposite of what the technology demands.</p><p>"Every euro we spend on AI generation, we should spend two on AI verification," said the head of one French fact-checking unit that closed in March. "But the economics don\'t work that way. Generation is flashy. Verification is invisible until it fails."</p>', footnote:'<span class="verified">● Verified</span> · Nieman Lab original reporting · 3 corroborating sources · Data confirmed with European Journalism Centre.' },
+  { url:'theverge.com', title:'OpenAI removes journalist protections from enterprise contracts — no public announcement', deck:'Section 4.3, which guaranteed publishers control over their content, was quietly removed in the May 2026 contract update.', byline:'The Verge · June 2, 2026', body:'<p>OpenAI updated its enterprise contracts in May 2026, <em class="mark">removing a clause that protected journalist content from being used for model training without explicit consent.</em> The change affects at least three major publishers and was not publicly disclosed until reporting by The Verge.</p><p>The original clause, introduced in 2024 after pressure from news organizations, guaranteed that "OpenAI will not use journalist content for model training without explicit opt-in from the publishing partner." Its removal shifts the default to opt-out — requiring publishers to actively request exclusion rather than being protected by default.</p>', footnote:'<span class="verified">● Verified</span> · The Verge original reporting · 2 corroborating sources · OpenAI declined to comment.' },
+  { url:'bloomberg.com', title:'News Corp signs exclusive AI training deal — terms remain undisclosed', deck:'The media conglomerate joins a growing list of publishers licensing content to AI companies under non-disclosure agreements.', byline:'Bloomberg · June 1, 2026', body:'<p>News Corp has signed an exclusive multi-year agreement to license its content archive for AI model training, according to sources familiar with the deal. The financial terms and scope of the agreement <em class="mark">remain undisclosed</em> — a pattern that has drawn criticism from media watchdog groups concerned about transparency in publisher-AI partnerships.</p>', footnote:'<span class="verified">● Verified</span> · Bloomberg reporting · Sources: 2 anonymous, 1 on background · Terms not independently verified.' },
+  { url:'techcrunch.com', title:'EU AI Act enforcement mechanisms remain unfunded two years after passage', deck:'The landmark legislation has no dedicated enforcement budget across the majority of member states.', byline:'TechCrunch · May 31, 2026', body:'<p>Two years after the European Union passed the AI Act — the world\'s first comprehensive AI regulation — <em class="mark">fewer than half of member states have allocated funding for enforcement.</em> The European AI Office, tasked with overseeing compliance, operates with 40 staff members covering a market of 450 million people.</p>', footnote:'<span class="verified">● Verified</span> · TechCrunch reporting · EU Commission budget documents corroborated · 14 member states confirmed unfunded.' }
+];
 
-// ── View switching ──
-const views = ['triage','editor','research','signals','review'];
-const labels = {'triage':'Reading Room','editor':'Writing Desk','research':'Research Desk','signals':'Signal Exchange','review':'Editorial Review'};
-const subs = {'triage':'Pipeline','editor':'Drafting','research':'Active','signals':'Online','review':'Pending'};
+const reviewArticles = [
+  { title:'AI-generated content is drowning local newsrooms', author:'Sarah Chen', version:'Draft v3', words:'1,240', body:'<h2>AI-generated content is drowning local newsrooms</h2><p>The numbers are stark. According to the Reuters Institute, 68% of local newsroom editors now spend more time debunking AI-generated content than producing original journalism. The tools designed for verification — reverse image search, manual source tracing, metadata analysis — were built for a different era of information warfare.</p><p>The gap between production and verification capabilities is growing exponentially. While a single bad actor can generate hundreds of convincing fake press releases in an afternoon, a mid-size newsroom has the same verification toolkit it had in 2019.</p>', notes:'<span class="from">From Editor:</span> Strong lead. Need a quote from a European editor to ground the numbers. Also — add a paragraph about what tools WOULD help. Don\'t just describe the problem, point to the solution. Ready for final once those two bits are in.' },
+  { title:'The quiet collapse of fact-checking departments', author:'Marcus Webb', version:'Draft v2', words:'980', body:'<h2>The quiet collapse of fact-checking departments</h2><p>Twenty-three fact-checking units at European news organizations have closed or reduced staff by more than half since January 2025. The closures follow a pattern: as AI investment rises, verification investment falls.</p>', notes:'<span class="from">From Editor:</span> Good structure. Missing the human element — interview one former fact-checker. Also, fact-check the 23 closures claim with the European Journalism Centre before publishing.' },
+  { title:'OpenAI removes journalist protections — what we know', author:'Elena Rossi', version:'Draft v4', words:'1,520', body:'<h2>OpenAI removes journalist protections — what we know</h2><p>OpenAI\'s May 2026 enterprise contract update quietly removed section 4.3 — the clause that protected journalist content from model training use without explicit consent. The change affects at least three major publishers and signals a broader shift in how AI companies approach content licensing.</p><p>The removal was not publicly announced. Publishers learned of the change through routine contract review processes, and The Verge broke the story on June 2.</p>', notes:'<span class="from">From Editor:</span> Approved for publication. Solid sourcing, balanced perspective, clear implications for the industry. Good work.' },
+  { title:'News Corp AI deal: the undisclosed terms', author:'David Park', version:'Draft v1', words:'740', body:'<h2>News Corp AI deal: the undisclosed terms</h2><p>News Corp\'s licensing agreement with an unnamed AI company raises questions about transparency in publisher-AI relationships. The terms of the deal are protected by NDA.</p>', notes:'<span class="from">From Editor:</span> Too short. Needs more reporting — who are the parties? What\'s the scope? What precedent does this set? Expand before next review.' },
+  { title:'EU AI Act: two years and still no teeth', author:'Ana Kowalski', version:'Draft v2', words:'1,100', body:'<h2>EU AI Act: two years and still no teeth</h2><p>The AI Act was passed with fanfare. Two years later, enforcement remains unfunded across most member states.</p>', notes:'<span class="from">From Editor:</span> Rejected — too similar to the TechCrunch piece already in the pipeline. Suggest a different angle: focus on one member state that IS enforcing, as a case study.' }
+];
 
-$$('.spine .tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    $$('.spine .tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const v = tab.dataset.view;
-    views.forEach(id => { const el = document.getElementById('v-'+id); if(el) el.style.display = (id===v && (v==='triage'||v==='editor')) ? (id==='triage'?'flex':'flex') : (id===v?'flex':'none'); });
-    $('#viewLabel').textContent = labels[v];
-    $('.view-sub').textContent = subs[v];
-  });
+// ═══════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const saved = localStorage.getItem('l06p0s3-theme');
+if (saved) html.setAttribute('data-theme', saved);
+themeToggle.textContent = html.getAttribute('data-theme') === 'light' ? '◑' : '◐';
+
+themeToggle.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('l06p0s3-theme', next);
+  themeToggle.textContent = next === 'light' ? '◑' : '◐';
 });
 
-// ── Feed selection ──
-$$('.feed .lead').forEach(lead => {
+// ═══════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════
+function renderSource(idx) {
+  const a = articles[idx];
+  document.getElementById('sourcePane').innerHTML =
+    `<div class="src-url"><em>▸</em> ${a.url}</div>` +
+    `<h1>${a.title}</h1>` +
+    `<div class="deck">${a.deck}</div>` +
+    `<div class="byline">${a.byline}</div>` +
+    a.body +
+    `<div class="footnote">${a.footnote}</div>`;
+}
+
+function renderReview(idx) {
+  const a = reviewArticles[idx];
+  document.getElementById('erDetail').innerHTML =
+    `<div class="er-draft">${a.body}</div>` +
+    `<div class="er-notes">${a.notes}</div>` +
+    `<div class="er-actions"><button class="approve">✓ Approve</button><button>Request Changes</button><button>Reject</button></div>`;
+}
+
+// ═══════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════
+const viewMap = { triage:'v-triage', editor:'v-editor', research:'v-research', signals:'v-signals', review:'v-review' };
+const viewLabels = { triage:'Reading Room', editor:'Writing Desk', research:'Research Desk', signals:'Signal Exchange', review:'Editorial Review' };
+const viewSubs = { triage:'Pipeline', editor:'Drafting', research:'Active', signals:'Online', review:'Pending' };
+const displayMap = { triage:'flex', editor:'flex', research:'flex', signals:'block', review:'flex' };
+
+function switchView(name) {
+  document.querySelectorAll('.spine .tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(`.spine .tab[data-view="${name}"]`);
+  if (tab) tab.classList.add('active');
+
+  Object.entries(viewMap).forEach(([k, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (k === name) ? displayMap[k] : 'none';
+  });
+
+  document.getElementById('viewLabel').textContent = viewLabels[name];
+  document.getElementById('viewSub').textContent = viewSubs[name];
+
+  // Render dynamic content
+  if (name === 'triage') renderSource(0);
+  if (name === 'review') renderReview(0);
+}
+
+document.querySelectorAll('.spine .tab').forEach(tab => {
+  tab.addEventListener('click', () => switchView(tab.dataset.view));
+});
+
+// Feed selection
+document.querySelectorAll('.feed .lead').forEach(lead => {
   lead.addEventListener('click', () => {
-    $$('.feed .lead').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.feed .lead').forEach(l => l.classList.remove('active'));
     lead.classList.add('active');
+    renderSource(parseInt(lead.dataset.article));
   });
 });
 
-// ── Focus Mode ──
+// Review selection
+document.querySelectorAll('.er-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.er-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    renderReview(parseInt(item.dataset.review));
+  });
+});
+
+// ═══════════════════════════════════════
+// FOCUS MODE
+// ═══════════════════════════════════════
 let focused = false;
-$('#focusToggle').addEventListener('click', () => {
+const focusToggle = document.getElementById('focusToggle');
+focusToggle.addEventListener('click', toggleFocus);
+
+function toggleFocus() {
   focused = !focused;
   document.body.classList.toggle('focus', focused);
-  $('#focusToggle').classList.toggle('on', focused);
-  $('#focusToggle').textContent = focused ? 'Focused' : 'Focus';
-});
+  focusToggle.classList.toggle('on', focused);
+  focusToggle.textContent = focused ? 'Focused' : 'Focus';
+}
 
-// ── Floating action bar hide on scroll ──
+// ═══════════════════════════════════════
+// FAB SCROLL HIDE
+// ═══════════════════════════════════════
+const fab = document.getElementById('fab');
 let scrollTimer;
-const fab = $('#fab');
-document.querySelector('.feed')?.addEventListener('scroll', () => {
-  fab.classList.add('hidden');
-  clearTimeout(scrollTimer);
-  scrollTimer = setTimeout(() => fab.classList.remove('hidden'), 2000);
-});
-document.querySelector('.source')?.addEventListener('scroll', () => {
-  fab.classList.add('hidden');
-  clearTimeout(scrollTimer);
-  scrollTimer = setTimeout(() => fab.classList.remove('hidden'), 2000);
+['.feed','.source','.col-paper','.rd-results','.rd-queries','.er-queue','.er-detail','.signal-exchange'].forEach(sel => {
+  const el = document.querySelector(sel);
+  if (el) el.addEventListener('scroll', () => {
+    fab.classList.add('hidden');
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => fab.classList.remove('hidden'), 2000);
+  });
 });
 
-// ── Keyboard: Esc = Focus toggle ──
+// ═══════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    focused = !focused;
-    document.body.classList.toggle('focus', focused);
-    $('#focusToggle').classList.toggle('on', focused);
-    $('#focusToggle').textContent = focused ? 'Focused' : 'Focus';
-  }
+  if (e.key === 'Escape') { e.preventDefault(); toggleFocus(); }
+  if (e.key === '1') switchView('triage');
+  if (e.key === '2') switchView('editor');
+  if (e.key === '3') switchView('research');
+  if (e.key === '4') switchView('signals');
+  if (e.key === '5') switchView('review');
+  if (e.key === 't' || e.key === 'T') switchView('triage');
+  if (e.key === 'w' || e.key === 'W') switchView('editor');
+  if (e.key === 'r' || e.key === 'R') switchView('research');
+  if (e.key === 's' || e.key === 'S') switchView('signals');
+  if (e.key === 'e' || e.key === 'E') switchView('review');
 });
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderSource(0);
+renderReview(0);
 </script>
 </body>
 </html>
