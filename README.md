@@ -1,6 +1,6 @@
 # lo6
 
-![License](https://img.shields.io/github/license/juanmanueldaza/lo6?style=flat-square)
+![License](https://img.shields.io/github/license/juanmanueldaza/lo6?style=flat-square&label=License)
 ![GitHub stars](https://img.shields.io/github/stars/juanmanueldaza/lo6?style=flat-square)
 
 > **The Ableton Live for News** — a Newsroom Operating System that orchestrates AI agents for sourcing, research, and drafting while keeping journalists in creative control.
@@ -97,4 +97,4 @@ See `.opencode/agents/n3rv.md` for available commands, skills, and SDD agents.
 
 ## License
 
-MIT © Juan Manuel Daza
+Apache-2.0 © Juan Manuel Daza
