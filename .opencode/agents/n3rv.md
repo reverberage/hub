@@ -48,6 +48,22 @@ Use `/sdd-new <change description>` to run the full 8-phase pipeline automatical
 ## Project Context
 
 
+This project uses: Next.js, React.
+
+
+
+
+
+
+- `lint`: `next lint`
+
+
+
+- `typecheck`: `tsc --noEmit`
+
+
+
+- `test`: `vitest run`
 
 
 

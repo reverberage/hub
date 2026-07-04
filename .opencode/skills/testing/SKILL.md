@@ -31,3 +31,21 @@ PREFER:
 - Factory fixtures over inline setup in each test
 - `conftest.py` for shared fixtures within a package
 
+
+
+
+
+
+
+
+
+## Detected Test Runner
+
+This project uses **vitest run**. Run tests with:
+
+```bash
+vitest run
+```
+
+
+

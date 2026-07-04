@@ -27,3 +27,25 @@ PREFER:
 - `pathlib.Path` over `os.path` for filesystem operations
 - Dataclasses or Pydantic over raw dicts for structured data
 
+
+## Detected Framework Conventions
+
+
+### Next.js
+
+Next.js patterns:
+- Use App Router (app/) for new projects
+- Use Server Components by default, opt-in to Client Components
+- Use `next/link` for client-side navigation
+- Use Route Handlers for API endpoints
+
+
+### React
+
+React patterns:
+- Use functional components with hooks
+- Use `useState` for local state, `useEffect` for side effects
+- Use `useCallback`/`useMemo` for performance optimization
+- Prefer controlled components
+
+

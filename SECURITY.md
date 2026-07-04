@@ -1,13 +1,16 @@
-# Security Policy
+# Security
 
-## Supported Versions
+## Trust Model
 
-We currently support the latest version with security updates.
+lo6 assumes a **trusted local environment**. All services bind to `127.0.0.1` only.
 
-## Reporting a Vulnerability
+## Rules
 
-If you discover a security vulnerability, please send an email to juanmanueldaza@gmail.com.
+See `AGENTS.md` for security-related coding standards:
+- Never hardcode secrets or credentials
+- Never commit `.env` files
+- Use environment variables for sensitive configuration
 
-Please do not report security vulnerabilities through public GitHub issues.
+## Reporting
 
-We will acknowledge receipt within 48 hours and provide a timeline for a fix.
+Report security issues directly to the project maintainers. Do not open public issues for vulnerabilities.

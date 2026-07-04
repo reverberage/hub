@@ -8,9 +8,9 @@ permission:
 ---
 Load the `sdd-explore` skill and execute it for the given change_id.
 
-Read the change description from context and:
-1. Search memory for prior context on this topic
-2. Identify relevant files, modules, directories
-3. Read interfaces (not implementation details)
-4. Note patterns, conventions, dependencies, test coverage, risks
-5. Save findings to memory: title=`SDD Explore: <change_id>`, topic_key=`sdd-<change_id>-context`, type=`context`
+1. Read the change description from context
+2. Search memory for prior context on this topic
+3. Identify relevant files, modules, directories
+4. Read interfaces (not implementation details)
+5. Note patterns, conventions, dependencies, test coverage, risks
+Save to memory: title=`SDD Explore: <change_id>`, topic_key=`sdd-<change_id>-context`, type=`context`

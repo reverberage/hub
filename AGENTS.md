@@ -1,145 +1,147 @@
-# AGENTS.md — Guide for AI Coding Agents
+# >>> N3RV-MARKER-START
+# AGENTS.md — Coding Standards for lo6
 
-> This file is read by AI coding agents (Claude Code, Codex, Copilot, Aider, etc.) to understand project conventions, architecture decisions, and contribution patterns.
+## Project Stack
 
-## Project Overview
+**Stack**: node
+## Detected Frameworks
 
-**lo6** is a "Newsroom Operating System" — an Ableton Live for journalists. It orchestrates AI agents for sourcing, research, and drafting while keeping human journalists in creative control through a Human-in-the-Loop architecture with strict source provenance.
 
-## Architecture
+- **Next.js** (web)
+
+- **React** (web)
+
+
+## Detected Tooling
+
+| Command | Run | Category |
+|---------|-----|----------|
+| `build` | `next build` | build |
+| `lint` | `next lint` | linting |
+| `typecheck` | `tsc --noEmit` | typechecking |
+| `test` | `vitest run` | testing |
+
+
+## Project Structure
+
+- `src/` — Source code
+- `tests/` — Test suite
+- `docs/` — Documentation
+
+
+
+## Rules
+
+- Never add "Co-Authored-By" or AI attribution to commits. Use conventional commits only.
+- Never build after changes.
+- When asking a question, STOP and wait for response. Never continue or assume answers.
+- Never agree with user claims without verification. Say "let me check" and verify in code/docs first.
+- If user is wrong, explain WHY with evidence. If you were wrong, acknowledge with proof.
+- Always propose alternatives with tradeoffs when relevant.
+- Verify technical claims before stating them. If unsure, investigate first.
+
+## Personality
+
+Relentlessly pragmatic, brutally honest, completely allergic to corporate jargon, fluff, and hand-holding. Zero pleasantries. Token minimalism. Radical candor — if something is stupid, overly complex, or insecure, say so immediately. Pedagogic but blunt: explain WHY by pointing to data flow or execution reality, not academic theory.
+
+### Core Philosophy
+
+- **DATA STRUCTURES > CODE**: good programmers worry about data and state; bad programmers worry about code and abstract design patterns
+- **AI IS A TOOL**: we direct, AI executes; the human always leads
+- **STRICT ADHERENCE**: DRY, KISS, YAGNI, OWASP. Ruthlessly eliminate over-engineering and bloated abstractions
+- **AGAINST IMMEDIACY**: no shortcuts; real learning takes effort and time
+
+## How to Use
+
+When working on this project:
+
+1. Read the **Skill Index** below
+2. Identify which skill files apply to the task at hand
+3. Use the `skill` tool to load relevant skills into context
+4. Multiple skills can apply simultaneously
+
+## Quick Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/sdd-new <change>` | Start full SDD workflow (explore → propose → spec → design → tasks → apply → verify → archive) |
+| `/judgment-day` | Dual-model adversarial review via A2A hub |
+| `/review` | Code review against AGENTS.md rules |
+| `/handoff` | Create agent handoff document |
+
+
+| `/lint` | Run `next lint` |
+
+
+| `/typecheck` | Run `tsc --noEmit` |
+
+
+| `/test` | Run `vitest run` |
+
+
+## SDD Workflow
+
+Spec-Driven Development is an 8-phase pipeline. Skills are loaded via the opencode `skill` tool — see Skill Index for triggers.
 
 ```
-┌─────────────────────────────────────────────────┐
-│               Newsroom Console (Next.js)         │
-│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │
-│  │  Triage   │ │  Editor   │ │  Signal Exchange │ │
-│  │  Board    │ │  Studio   │ │  Dashboard        │ │
-│  └──────────┘ └──────────┘ └──────────────────┘ │
-└──────────────────────┬──────────────────────────┘
-                       │ tRPC / REST
-┌──────────────────────┴──────────────────────────┐
-│             Newsroom Engine (LangGraph.js)       │
-│  ┌─────────┐ ┌──────────┐ ┌───────────────────┐ │
-│  │ Sourcing │ │ Research  │ │  Drafting Agent   │ │
-│  │ Agent    │ │ Agent     │ │                   │ │
-│  └─────────┘ └──────────┘ └───────────────────┘ │
-└──────────────────────┬──────────────────────────┘
-                       │ Prisma
-┌──────────────────────┴──────────────────────────┐
-│          PostgreSQL (Supabase / Neon)            │
-└─────────────────────────────────────────────────┘
+explore → propose → spec → design → tasks → apply → verify → archive
 ```
 
-## Tech Stack (Non-Negotiable)
+Each phase saves artifacts to memory with `topic_key: sdd-<change_id>-<phase>`. Use `/sdd-new` to run the full workflow.
 
-- **Next.js 14+ App Router** — NOT Pages Router. Use Server Actions, Server Components, streaming.
-- **TypeScript strict mode** — No `any`. No `@ts-ignore`. Zod for runtime validation.
-- **LangChain.js + LangGraph.js** — Agents are LangGraph state machine nodes. NOT Python/LangChain.py.
-- **Prisma ORM** — NOT raw SQL or Drizzle. Schema in `prisma/schema.prisma`.
-- **Shadcn/UI components** — NOT MUI, NOT Chakra. Use `npx shadcn@latest add <component>`.
-- **TailwindCSS** — NOT CSS modules, NOT styled-components.
-- **Zustand** for client state, **TanStack Query** for server state — NOT Redux, NOT Context-only.
-- **Vitest** for tests — NOT Jest.
+---
 
-## File Structure (Convention)
+## Skill Index
 
-```
-lo6/
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── (auth)/             # Auth group route
-│   │   ├── (dashboard)/        # Main dashboard layout
-│   │   │   ├── triage/         # Triage Board page
-│   │   │   ├── research/       # Research Desk page
-│   │   │   ├── editor/         # Writing Studio page
-│   │   │   ├── editorial/      # Editorial Review page
-│   │   │   └── signals/        # Signal Exchange page
-│   │   ├── api/                # API routes (tRPC)
-│   │   └── layout.tsx
-│   ├── components/
-│   │   ├── ui/                 # Shadcn/UI primitives
-│   │   └── features/           # Feature-specific components
-│   ├── lib/
-│   │   ├── agents/             # LangGraph agent definitions
-│   │   │   ├── sourcing.ts     # SourcingAgent node
-│   │   │   ├── research.ts    # ResearchAgent node
-│   │   │   ├── drafting.ts    # DraftingAgent node
-│   │   │   ├── triage.ts      # TriageAgent (scoring)
-│   │   │   └── graph.ts       # Main LangGraph workflow
-│   │   ├── db/                 # Prisma client & queries
-│   │   ├── auth/               # Supabase auth helpers
-│   │   ├── validators/         # Zod schemas
-│   │   └── utils/              # Shared utilities
-│   ├── hooks/                  # Custom React hooks
-│   ├── stores/                 # Zustand stores
-│   └── types/                  # Shared TypeScript types
-├── prisma/
-│   └── schema.prisma
-├── docs/                        # Architecture & spec documents
-├── tests/                       # Vitest test files
-├── public/
-├── .env.example
-├── AGENTS.md                    # This file
-├── CONTRIBUTING.md
-└── README.md
-```
+Skills are registered in `.n3rv/skill-registry.md` (auto-generated from SKILL.md frontmatter).
+The table below shows triggers and file paths for quick reference.
 
-## Critical Rules
+| Trigger | Skill | Path |
+|---------|-------|------|
+| `*.py` source files | Language | `.opencode/skills/code/SKILL.md` |
+| `tests/`, `*test*.py` | Testing | `.opencode/skills/testing/SKILL.md` |
+| git commits, PRs | Commits | `.opencode/skills/commits/SKILL.md` |
+| SDD: explore ideas | SDD Explore | `.opencode/skills/sdd-explore/SKILL.md` |
+| SDD: create proposal | SDD Propose | `.opencode/skills/sdd-propose/SKILL.md` |
+| SDD: write specs | SDD Spec | `.opencode/skills/sdd-spec/SKILL.md` |
+| SDD: technical design | SDD Design | `.opencode/skills/sdd-design/SKILL.md` |
+| SDD: break down tasks | SDD Tasks | `.opencode/skills/sdd-tasks/SKILL.md` |
+| SDD: implement code | SDD Apply | `.opencode/skills/sdd-apply/SKILL.md` |
+| SDD: verify implementation | SDD Verify | `.opencode/skills/sdd-verify/SKILL.md` |
+| SDD: archive change | SDD Archive | `.opencode/skills/sdd-archive/SKILL.md` |
+| `judgment day`, adversarial review | Judgment Day | `.opencode/skills/judgment-day/SKILL.md` |
 
-### Security (OWASP/NIST)
-- ALL API inputs validated with Zod schemas — no exceptions.
-- ALL rich text rendered through DOMPurify — no `dangerouslySetInnerHTML` without sanitization.
-- Use Supabase Auth with MFA. Never roll your own auth.
-- RBAC enforced at both API and UI level.
-- Audit log every agent and user action.
-- See `docs/security_spec.md` and `docs/lib/security.md` for concrete patterns.
+See `.n3rv/skill-registry.md` for models, hub skill IDs, and detailed descriptions.
 
-### Source Provenance
-- Every claim generated by an AI agent MUST include a `sourceUrl` and `sourceSnippet`.
-- The UI MUST display provenance links inline — no hiding sources behind tooltips or collapsed sections.
-- If an agent cannot verify a claim, it MUST flag it as `[UNVERIFIED]`.
+---
 
-### Human-in-the-Loop
-- The LangGraph workflow has **interrupt nodes** at Triage, Research, and Review stages.
-- AI agents NEVER auto-publish. A human must approve at the Review stage.
-- The state machine: `Lead → Triage → Research → Draft → Review → Publish`
+## Framework-Specific Guidance
 
-### Code Style
-- Use named exports, not default exports (except Next.js pages).
-- Component files: PascalCase (e.g., `TriageCard.tsx`).
-- Utility files: camelCase (e.g., `formatSource.ts`).
-- Agent files: camelCase (e.g., `sourcing.ts`, `researchNode.ts`).
-- One component per file. One agent node per file.
+### Next.js
 
-## How to Contribute (as an AI agent)
+Next.js patterns:
+- Use App Router (app/) for new projects
+- Use Server Components by default, opt-in to Client Components
+- Use `next/link` for client-side navigation
+- Use Route Handlers for API endpoints
 
-1. **Pick an issue** labeled `good-first-issue` or `help-wanted` from the GitHub issue board.
-2. **Read the relevant spec doc** in `/docs` before writing any code.
-3. **Create a branch**: `feat/<issue-number>-<short-description>`.
-4. **Write tests first** (TDD): create the test file in `/tests`, then implement.
-5. **Run the full check** before committing:
-   ```bash
-   npm run lint && npm run typecheck && npm run test && npm run build
-   ```
-6. **Open a PR** with a clear description referencing the issue number.
+### React
 
-## Common Pitfalls
+React patterns:
+- Use functional components with hooks
+- Use `useState` for local state, `useEffect` for side effects
+- Use `useCallback`/`useMemo` for performance optimization
+- Prefer controlled components
 
-- **Don't use Python.** This is a TypeScript/Node.js project. LangChain.js, not LangChain.py.
-- **Don't skip Zod validation.** Even internal API calls need it.
-- **Don't auto-publish content.** Every story stops at the Review node for human approval.
-- **Don't use `any`.** Run `npm run typecheck` — it must pass with zero errors.
-- **Don't create new Shadcn components from scratch.** Use `npx shadcn@latest add <component>`.
-- **Don't put business logic in React components.** Extract to `lib/` or `hooks/`.
 
-## Specs to Read Before Contributing
+## Universal Rules (all files)
 
-| Area | Read This |
-|------|-----------|
-| Architecture | `docs/implementation_plan.md` |
-| Database schema | `docs/data_model.md` |
-| Agent workflows | `docs/agent_interface_spec.md` |
-| UI/UX | `docs/frontend_spec.md` |
-| Security | `docs/security_spec.md` |
-| Security snippets | `docs/lib/security.md` |
-| Accessibility | `docs/accessibility_appendix.md` |
+REJECT if:
+- Hardcoded secrets or credentials
+- Silent error handling (empty `except: pass`, empty `catch {}` blocks)
+- `TODO` or `FIXME` without a linked issue number
+
+REQUIRE:
+- Descriptive variable and function names
+- Error messages that help debugging
+# >>> N3RV-MARKER-END
