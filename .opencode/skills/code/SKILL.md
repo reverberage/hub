@@ -66,7 +66,7 @@ pyproject.toml       — hatchling build config
 - Always document tool inputs/outputs in docstrings (MCP reads them)
 
 ### A2A Agent Registration
-- Agents register with the N3RV hub via `n3rv_agent.register()`
+- Agents register with the N3RVERBERAGE hub via `n3rv_agent.register()`
 - Each agent has: `id`, `name`, `skill_ids`, `description`
 - Agent logic runs as a stateless function receiving a task dict
 - Agent returns structured results with `status` and `output` keys

@@ -11,7 +11,7 @@ Rename the project from l06_p0s3 to lo6. Remove all One Piece / Log Pose referen
 - `package-lock.json` — `"name": "l06-p0s3"` → `"name": "lo6"` (2 occurrences)
 
 ### Project config
-- `.n3rv/a2a-config.yaml` — `project: l06_p0s3` → `project: lo6`
+- `.n3rverberage/a2a-config.yaml` — `project: l06_p0s3` → `project: lo6`
 
 ### README.md
 - Title: `# l06_p0s3 (Log Pose)` → `# lo6`
@@ -29,8 +29,8 @@ Rename the project from l06_p0s3 to lo6. Remove all One Piece / Log Pose referen
 - Title: `<title>l06_p0s3 — Newsroom OS</title>` → `<title>lo6 — Newsroom OS</title>`
 - Footer stat: `l06_p0s3` → `lo6`, update GitHub URL
 
-### .opencode/agents/n3rv.md
-- "You are N3RV, the orchestration agent for l06_p0s3." → "You are N3RV, the orchestration agent for lo6."
+### .opencode/agents/n3rverberage.md
+- "You are N3RVERBERAGE, the orchestration agent for l06_p0s3." → "You are N3RVERBERAGE, the orchestration agent for lo6."
 
 ### CONTRIBUTING.md
 - Title: `# Contributing to l06_p0s3 (Log Pose)` → `# Contributing to lo6`

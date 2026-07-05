@@ -1,11 +1,11 @@
 /**
- * N3RV RPC helpers — shared across OpenCode tools and plugins.
+ * N3RVERBERAGE RPC helpers — shared across OpenCode tools and plugins.
  *
  * Exports:
- *   memoryRpc(method, params, timeoutMs)  — call n3rv-memory MCP
- *   hubRpc(method, params, timeoutMs)     — call n3rv-hub MCP
+ *   memoryRpc(method, params, timeoutMs)  — call n3rverberage-memory MCP
+ *   hubRpc(method, params, timeoutMs)     — call n3rverberage-hub MCP
  *   withTimeout(ms)                        — AbortController-based timeout
- *   healthCheck()                          — check n3rv-hub /health endpoint
+ *   healthCheck()                          — check n3rverberage-hub /health endpoint
  *
  * All functions return structured JSON with `error` key on failure.
  */
@@ -65,21 +65,21 @@ async function rpcCall(baseUrl, method, params, timeoutMs) {
 }
 
 /**
- * Call an RPC method on the n3rv-memory MCP server.
+ * Call an RPC method on the n3rverberage-memory MCP server.
  */
 export async function memoryRpc(method, params = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
   return rpcCall(MEMORY_MCP_URL, method, params, timeoutMs);
 }
 
 /**
- * Call an RPC method on the n3rv-hub MCP server.
+ * Call an RPC method on the n3rverberage-hub MCP server.
  */
 export async function hubRpc(method, params = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
   return rpcCall(HUB_MCP_URL, method, params, timeoutMs);
 }
 
 /**
- * Check whether the n3rv-hub /health endpoint is reachable.
+ * Check whether the n3rverberage-hub /health endpoint is reachable.
  * Returns { connected: true/false, ...data }.
  */
 export async function healthCheck() {

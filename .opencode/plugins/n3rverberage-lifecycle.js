@@ -1,5 +1,5 @@
 /**
- * n3rv-lifecycle plugin for OpenCode.
+ * n3rverberage-lifecycle plugin for OpenCode.
  *
  * Two hooks:
  * 1. experimental.session.compacting — injects SDD pipeline state into

@@ -8,10 +8,10 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
-  - mcp__n3rv-memory__memory_recall
-  - mcp__n3rv-memory__memory_save
-  - mcp__n3rv-hub__delegate_task
-  - mcp__n3rv-hub__get_task
+  - mcp__n3rverberage-memory__memory_recall
+  - mcp__n3rverberage-memory__memory_save
+  - mcp__n3rverberage-hub__delegate_task
+  - mcp__n3rverberage-hub__get_task
 model: high
 effort: high
 user-invocable: true

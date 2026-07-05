@@ -1,6 +1,6 @@
 ---
 description: Run type checking on the project
-agent: n3rv
+agent: n3rverberage
 subtask: true
 ---
 Run the type checker for this project.

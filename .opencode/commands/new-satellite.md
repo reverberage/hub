@@ -1,6 +1,6 @@
 ---
 description: Scaffold a new reverberage satellite package
-agent: n3rv
+agent: n3rverberage
 subtask: true
 ---
 

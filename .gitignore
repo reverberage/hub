@@ -24,8 +24,8 @@ htmlcov/
 # Secrets baseline
 .secrets.baseline
 
-# N3RV runtime data (config files are tracked)
-.n3rv/memory/
-.n3rv/hub-state/
-.n3rv/logs/
-.n3rv/*.lock
+# N3RVERBERAGE runtime data (config files are tracked)
+.n3rverberage/memory/
+.n3rverberage/hub-state/
+.n3rverberage/logs/
+.n3rverberage/*.lock
