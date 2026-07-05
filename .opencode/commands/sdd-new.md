@@ -1,6 +1,6 @@
 ---
 description: Start a full SDD workflow for a change
-agent: n3rv
+agent: n3rverberage
 subtask: true
 model: opencode-go/deepseek-v4-pro
 ---

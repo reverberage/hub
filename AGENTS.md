@@ -1,4 +1,4 @@
-# >>> N3RV-MARKER-START
+# >>> N3RVERBERAGE-MARKER-START
 # AGENTS.md — Coding Standards for hub
 
 ## Project Stack
@@ -126,4 +126,4 @@ REJECT if:
 REQUIRE:
 - Descriptive variable and function names
 - Error messages that help debugging
-# >>> N3RV-MARKER-END
+# >>> N3RVERBERAGE-MARKER-END

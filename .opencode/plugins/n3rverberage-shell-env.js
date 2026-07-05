@@ -1,11 +1,11 @@
 /**
- * n3rv-shell-env plugin for OpenCode.
+ * n3rverberage-shell-env plugin for OpenCode.
  *
- * shell.env hook: injects N3RV_AGENT_SOURCE based on the active OpenCode
+ * shell.env hook: injects N3RVERBERAGE_AGENT_SOURCE based on the active OpenCode
  * agent name. Preserves existing value if already set.
  *
  * Agent name → source mapping:
- *   "n3rv"          → "opencode:n3rv"
+ *   "n3rverberage"          → "opencode:n3rverberage"
  *   "sdd-*"         → "opencode:sdd-<phase>"
  *   "git-ops"       → "opencode:git-ops"
  *   "github-ops"    → "opencode:github-ops"
@@ -15,7 +15,7 @@
  */
 
 const AGENT_SOURCE_MAP = {
-  n3rv: "opencode:n3rv",
+  n3rverberage: "opencode:n3rverberage",
   "git-ops": "opencode:git-ops",
   "github-ops": "opencode:github-ops",
 };
@@ -37,11 +37,11 @@ export const NervShellEnv = async (_ctx) => {
     "shell.env": async (input, output) => {
       try {
         // Never overwrite an already-set value
-        if (output.env.N3RV_AGENT_SOURCE) return;
+        if (output.env.N3RVERBERAGE_AGENT_SOURCE) return;
 
         const agentName = input.agentName ?? input.agent ?? "";
         const source = deriveSource(agentName);
-        output.env.N3RV_AGENT_SOURCE = source;
+        output.env.N3RVERBERAGE_AGENT_SOURCE = source;
       } catch {
         // Degrade silently — never block OpenCode
       }

@@ -5,7 +5,7 @@
 reverberage is a **hub-and-satellite** ecosystem:
 
 - **Hub** (`reverberage/hub`): meta-repository. Contains documentation, roadmaps,
-  scaffold scripts, and the N3RV orchestration agent. No runtime code.
+  scaffold scripts, and the N3RVERBERAGE orchestration agent. No runtime code.
 - **Satellite**: independent, pip-installable Python package. Each satellite
   does exactly one thing and can be used alone or composed into pipelines.
 
