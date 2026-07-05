@@ -1,7 +1,7 @@
 ---
 description: Break SDD design into ordered list of atomic, reviewable implementation tasks.
 mode: subagent
-model: opencode-go/qwen3.5-plus
+model: opencode-go/deepseek-v4-pro
 hidden: true
 permission:
   edit: deny

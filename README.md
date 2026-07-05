@@ -2,7 +2,7 @@
 
 The meta-repository for the [reverberage](https://github.com/reverberage) ecosystem.
 
-**Composable LEGO pieces for the newsroom.** Reverb + Beverage.
+**Composable Python tools for natural language workflows.** Ingest, generate, verify, transform — across audio, video, and text.
 
 ## Satellites
 
@@ -12,15 +12,12 @@ Each satellite is an independent Python package — usable alone or together.
 |-----------|------|---------|--------|
 | **transcriber** | [reverberage/transcriber](https://github.com/reverberage/transcriber) | `rvrb-transcriber` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 | **verify** | — | `rvrb-verify` | planned |
+| **transform** | — | `rvrb-transform` | planned |
 | **scout** | — | `rvrb-scout` | planned |
 
-→ [Shipyard board](https://github.com/orgs/reverberage/projects/1)
+## Demos
 
-## Concept
-
-[**→ View the visual concept**](https://juanmanueldaza.github.io/lo6/concept.html)
-
-The "Editorial Avant-Garde" design system: dark mode canvas, Playfair Display serif headlines, 50/50 split-pane Reading Room with inline source provenance, floating action bars, Focus Mode.
+- [**lo6 — Newsroom OS**](./demos/lo6/) — A conceptual demo showcasing how reverberage satellites compose into an AI-powered newsroom workflow (triage → research → draft → review → publish).
 
 ## Philosophy
 
@@ -31,13 +28,11 @@ The "Editorial Avant-Garde" design system: dark mode canvas, Playfair Display se
 
 ## Docs
 
-| Doc | Status |
-|-----|--------|
-| [Security Spec](./docs/security_spec.md) | OWASP/NIST/ISO 27001 |
-| [Data Model](./docs/data_model.md) | Entity reference |
-| [Agent Interface Spec](./docs/agent_interface_spec.md) | Legacy LangGraph spec — being decomposed into satellite protocols |
-| [Accessibility Appendix](./docs/accessibility_appendix.md) | WCAG design tokens |
-| [Funding Plan](./docs/Funding_Plan.md) | Grants, consortium, subscription |
+| Doc | Description |
+|-----|-------------|
+| [Satellite Protocol](./docs/satellite-protocol.md) | Build, package, and naming conventions |
+| [Architecture](./docs/architecture.md) | Hub/satellite model and composition patterns |
+| [Roadmap](./docs/roadmap.md) | Shipped satellites and planned priorities |
 
 ## License
 

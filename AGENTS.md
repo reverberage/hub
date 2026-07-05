@@ -1,26 +1,15 @@
 # >>> N3RV-MARKER-START
-# AGENTS.md — Coding Standards for reverberage
+# AGENTS.md — Coding Standards for hub
 
 ## Project Stack
 
-**Stack**: python
-## Detected Tooling
-
-| Command | Run | Category |
-|---------|-----|----------|
-| `test` | `pytest` | testing |
-| `lint` | `ruff check` | linting |
-| `typecheck` | `mypy .` | typechecking |
-
-
+**Stack**: generic
 ## Project Structure
 
-This is the hub repo. Each satellite has its own repo under [reverberage](https://github.com/reverberage).
 
-- `docs/` — Specifications, architecture, runbook
-- `concept.html` — Visual design canon
-- `.opencode/` — N3RV dev tooling
-- `.n3rv/` — N3RV engine config
+
+- `docs/` — Documentation
+
 
 
 ## Rules
@@ -58,15 +47,10 @@ When working on this project:
 | Command | Purpose |
 |---------|---------|
 | `/sdd-new <change>` | Start full SDD workflow (explore → propose → spec → design → tasks → apply → verify → archive) |
+| `/new-satellite` | Scaffold a new reverberage satellite package |
 | `/judgment-day` | Dual-model adversarial review via A2A hub |
 | `/review` | Code review against AGENTS.md rules |
 | `/handoff` | Create agent handoff document |
-
-
-| `/test` | Run `pytest` |
-| `/lint` | Run `ruff check` |
-| `/typecheck` | Run `mypy .` |
-
 
 ## SDD Workflow
 
@@ -81,9 +65,6 @@ Each phase saves artifacts to memory with `topic_key: sdd-<change_id>-<phase>`. 
 ---
 
 ## Skill Index
-
-Skills are registered in `.n3rv/skill-registry.md` (auto-generated from SKILL.md frontmatter).
-The table below shows triggers and file paths for quick reference.
 
 | Trigger | Skill | Path |
 |---------|-------|------|
@@ -100,20 +81,40 @@ The table below shows triggers and file paths for quick reference.
 | SDD: archive change | SDD Archive | `.opencode/skills/sdd-archive/SKILL.md` |
 | `judgment day`, adversarial review | Judgment Day | `.opencode/skills/judgment-day/SKILL.md` |
 
-See `.n3rv/skill-registry.md` for models, hub skill IDs, and detailed descriptions.
+---
 
 ---
 
-## Framework-Specific Guidance
+## reverberage Framework
 
-### Python
+This template is maintained by [reverberage](https://github.com/reverberage). For satellite projects:
 
-- Pydantic v2 for data models, Typer for CLIs
-- `hatchling` for builds, `pip` for dependency management (no uv)
-- Each satellite is a standalone package, installable via `pip install -e ".[dev]"`
-- MCP servers use the `mcp` Python SDK
-- A2A agents register with the N3RV hub
+### Project Conventions
+- Each satellite is an independent, pip-installable Python package
+- Build backend: `hatchling` (never uv)
+- CLI framework: `typer` (never argparse directly)
+- Data models: Pydantic v2 `BaseModel`
+- Package manager: `pip` (never uv)
+- Test runner: `pytest` with `typer.testing.CliRunner`
+- Linting: `ruff check`
+- Type checking: `mypy .`
+- License: Apache-2.0
+- Python: >=3.11
 
+### Entry Points Pattern
+```python
+# pyproject.toml
+[project.scripts]
+my-satellite = "my_satellite.cli:main"
+my-satellite-mcp = "my_satellite.mcp:main"
+```
+
+### Commands (bare binaries, no uv prefix)
+- `/test` → `pytest`
+- `/lint` → `ruff check`
+- `/typecheck` → `mypy .`
+
+---
 
 ## Universal Rules (all files)
 

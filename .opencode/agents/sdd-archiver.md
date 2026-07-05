@@ -1,7 +1,7 @@
 ---
 description: Archive all SDD artifacts into a single completed record in memory.
 mode: subagent
-model: opencode-go/qwen3.5-plus
+model: opencode-go/deepseek-v4-pro
 hidden: true
 permission:
   edit: deny
