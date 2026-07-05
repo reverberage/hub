@@ -8,78 +8,8 @@ on:
 
 permissions:
   contents: read
-  checks: write
 
 jobs:
-  build-and-lint:
-    name: Install, Lint and Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ] || [ -f package.json ]; then
-            npm ci
-          else
-            echo "No package.json found — skipping npm install"
-          fi
-
-      - name: Run ESLint
-        run: |
-          if [ -f package.json ] && grep -q '"lint"' package.json 2>/dev/null; then
-            npm run lint
-          else
-            echo "No lint script found (skipped)"
-          fi
-
-      - name: TypeScript type check
-        run: |
-          if [ -f package.json ] && grep -q '"typecheck"' package.json 2>/dev/null; then
-            npm run typecheck
-          else
-            echo "No typecheck script found (skipped)"
-          fi
-
-      - name: Build
-        run: |
-          if [ -f package.json ] && grep -q '"build"' package.json 2>/dev/null; then
-            npm run build
-          else
-            echo "No build script found (skipped)"
-          fi
-
-  codeql:
-    name: CodeQL Scan
-    runs-on: ubuntu-latest
-    # Only run CodeQL when there is actual JS/TS source code to analyze.
-    # Skips gracefully on doc-only repos or early-stage projects without code yet.
-    if: ${{ false }}  # Enable once src/ with JS/TS code exists
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-
-      - name: Run CodeQL
-        uses: github/codeql-action/analyze@v3
-
   secret-scan:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
@@ -88,8 +18,22 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Run gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  lint:
+    name: Lint YAML/Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check YAML
+        run: |
+          for f in $(find . -name '*.yml' -o -name '*.yaml' | grep -v node_modules); do
+            python -c "import yaml; yaml.safe_load(open('$f'))" || exit 1
+          done
+      - name: Check Markdown links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: yes

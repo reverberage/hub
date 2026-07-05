@@ -1,22 +1,24 @@
-# Contributing to lo6
+# Contributing to reverberage
 
 ## Dev Setup
 
-See `AGENTS.md` for coding standards, rules, and the skill index.
-
-## Running Tests
+Each satellite is its own repo under [reverberage](https://github.com/reverberage).
 
 ```bash
-pytest
+# Clone a satellite
+git clone https://github.com/reverberage/transcriber.git
+cd transcriber
+uv sync --extra dev
+uv run pytest
 ```
 
 ## Code Style
 
-All rules are enforced via `AGENTS.md` (loaded automatically by opencode agent).
-See the **Skill Index** and **Universal Rules** sections.
+All rules are enforced via the project's AGENTS.md (loaded automatically by opencode agent).
 
-## Adding Skills
+## Adding Satellites
 
-See `AGENTS.md` → **Skill Index** for the full list. To add a new skill:
-1. Create `.opencode/skills/<name>/SKILL.md` with required frontmatter
-2. Add it to `AGENTS.md` skills table
+See `README.md` → Satellites table. To add a new satellite:
+1. Create `reverberage/<name>` repo under the org
+2. Follow the existing satellite template (Pydantic + Typer + pytest + uv)
+3. Register it in the Shipyard project board

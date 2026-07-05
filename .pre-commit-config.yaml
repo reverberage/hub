@@ -5,25 +5,9 @@ repos:
       - id: detect-secrets
         args: [--baseline, .secrets.baseline]
 
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.44.0
-    hooks:
-      - id: eslint
-        additional_dependencies: []
-        files: '\.(js|ts|jsx|tsx)$'
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-
-# Local hook to run project lint (requires node/npm present)
-  - repo: local
-    hooks:
-      - id: npm-lint
-        name: npm run lint (if-present)
-        entry: bash -c "if [ -f package.json ] && grep -q 'lint' package.json 2>/dev/null; then npm run lint --if-present; else echo 'skip lint'; fi"
-        language: system
-        files: '\.(js|ts|jsx|tsx|md)$'

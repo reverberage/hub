@@ -1,33 +1,26 @@
 # >>> N3RV-MARKER-START
-# AGENTS.md — Coding Standards for lo6
+# AGENTS.md — Coding Standards for reverberage
 
 ## Project Stack
 
-**Stack**: node
-## Detected Frameworks
-
-
-- **Next.js** (web)
-
-- **React** (web)
-
-
+**Stack**: python
 ## Detected Tooling
 
 | Command | Run | Category |
 |---------|-----|----------|
-| `build` | `next build` | build |
-| `lint` | `next lint` | linting |
-| `typecheck` | `tsc --noEmit` | typechecking |
-| `test` | `vitest run` | testing |
+| `test` | `uv run pytest` | testing |
+| `lint` | `uv run ruff check` | linting |
+| `typecheck` | `uv run mypy .` | typechecking |
 
 
 ## Project Structure
 
-- `src/` — Source code
-- `tests/` — Test suite
-- `docs/` — Documentation
+This is the hub repo. Each satellite has its own repo under [reverberage](https://github.com/reverberage).
 
+- `docs/` — Specifications, architecture, runbook
+- `concept.html` — Visual design canon
+- `.opencode/` — N3RV dev tooling
+- `.n3rv/` — N3RV engine config
 
 
 ## Rules
@@ -70,13 +63,9 @@ When working on this project:
 | `/handoff` | Create agent handoff document |
 
 
-| `/lint` | Run `next lint` |
-
-
-| `/typecheck` | Run `tsc --noEmit` |
-
-
-| `/test` | Run `vitest run` |
+| `/test` | Run `uv run pytest` |
+| `/lint` | Run `uv run ruff check` |
+| `/typecheck` | Run `uv run mypy .` |
 
 
 ## SDD Workflow
@@ -117,21 +106,13 @@ See `.n3rv/skill-registry.md` for models, hub skill IDs, and detailed descriptio
 
 ## Framework-Specific Guidance
 
-### Next.js
+### Python
 
-Next.js patterns:
-- Use App Router (app/) for new projects
-- Use Server Components by default, opt-in to Client Components
-- Use `next/link` for client-side navigation
-- Use Route Handlers for API endpoints
-
-### React
-
-React patterns:
-- Use functional components with hooks
-- Use `useState` for local state, `useEffect` for side effects
-- Use `useCallback`/`useMemo` for performance optimization
-- Prefer controlled components
+- Use Pydantic for data models, Typer for CLIs
+- Use `uv` for dependency management, `hatchling` for builds
+- Each satellite is a standalone package, installable via `pip`
+- MCP servers use the `mcp` Python SDK
+- A2A agents register with the N3RV hub
 
 
 ## Universal Rules (all files)
