@@ -2,7 +2,7 @@
 
 ## Trust Model
 
-lo6 assumes a **trusted local environment**. All services bind to `127.0.0.1` only.
+reverberage assumes a **trusted local environment**. All services bind to `127.0.0.1` only.
 
 ## Rules
 
