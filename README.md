@@ -15,8 +15,6 @@ Each satellite is an independent Python package — usable alone or together.
 | **transform** | — | `rvrb-transform` | planned |
 | **scout** | — | `rvrb-scout` | planned |
 
-→ [Shipyard board](https://github.com/orgs/reverberage/projects/1)
-
 ## Demos
 
 - [**lo6 — Newsroom OS**](./demos/lo6/) — A conceptual demo showcasing how reverberage satellites compose into an AI-powered newsroom workflow (triage → research → draft → review → publish).
