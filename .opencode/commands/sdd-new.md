@@ -2,7 +2,7 @@
 description: Start a full SDD workflow for a change
 agent: n3rv
 subtask: true
-model: opencode-go/qwen3.5-plus
+model: opencode-go/deepseek-v4-pro
 ---
 Start a Spec-Driven Development (SDD) workflow for: $ARGUMENTS
 
