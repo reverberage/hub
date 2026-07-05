@@ -13,8 +13,10 @@ from pathlib import Path
 
 def validate_name(name: str) -> str:
     if not re.match(r"^[a-z][a-z0-9_-]*$", name):
-        print(f"Error: '{name}' is not a valid package name. "
-              "Use lowercase letters, digits, hyphens, and underscores only.")
+        print(
+            f"Error: '{name}' is not a valid package name. "
+            "Use lowercase letters, digits, hyphens, and underscores only."
+        )
         sys.exit(1)
     return name
 
@@ -56,7 +58,7 @@ dev = [
 ]
 
 [project.scripts]
-rvrb-{name} = "rvrb_{name.replace('-', '_')}.cli:app"
+rvrb-{name} = "rvrb_{name.replace("-", "_")}.cli:app"
 
 [tool.ruff]
 target-version = "py311"
@@ -71,7 +73,7 @@ testpaths = ["tests"]
 
     # src/<pkg>/__init__.py
     (pkg_dir).mkdir(parents=True)
-    (pkg_dir / "__init__.py").write_text(f"""\
+    (pkg_dir / "__init__.py").write_text("""\
 __version__ = "0.1.0"
 """)
 
@@ -88,7 +90,7 @@ app = typer.Typer(
 @app.command()
 def version() -> None:
     \"\"\"Print the package version.\"\"\"
-    from rvrb_{name.replace('-', '_')} import __version__
+    from rvrb_{name.replace("-", "_")} import __version__
     typer.echo(__version__)
 
 
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     # tests/test_<name>.py
     (target / "tests" / f"test_{name.replace('-', '_')}.py").write_text(f"""\
 from typer.testing import CliRunner
-from rvrb_{name.replace('-', '_')}.cli import app
+from rvrb_{name.replace("-", "_")}.cli import app
 
 runner = CliRunner()
 
@@ -141,8 +143,8 @@ pytest
 
     print(f"Scaffolded {target}")
     print(f"  cd {name}")
-    print(f"  pip install -e \".[dev]\"")
-    print(f"  pytest")
+    print('  pip install -e ".[dev]"')
+    print("  pytest")
 
 
 if __name__ == "__main__":
