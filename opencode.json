@@ -21,12 +21,12 @@
   "mcp": {
     "n3rv-memory": {
       "type": "local",
-      "command": ["uv", "run", "n3rv-memory"],
+      "command": ["n3rv-memory"],
       "environment": {"N3RV_AGENT_SOURCE": "opencode"}
     },
     "n3rv-hub": {
       "type": "local",
-      "command": ["uv", "run", "n3rv-hub"],
+      "command": ["n3rv-hub"],
       "environment": {"N3RV_AGENT_SOURCE": "opencode"}
     },
     "github": {

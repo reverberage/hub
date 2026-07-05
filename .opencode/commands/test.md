@@ -13,9 +13,9 @@ Run the test suite for this project.
 
 
 
-Test command: `vitest run`
+Test command: `pytest`
 
-Execute: `!vitest run`
+Execute: `!pytest`
 
 
 

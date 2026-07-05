@@ -11,9 +11,9 @@ Run the type checker for this project.
 
 
 
-Type check command: `tsc --noEmit`
+Type check command: `mypy .`
 
-Execute: `!tsc --noEmit`
+Execute: `!mypy .`
 
 
 

@@ -8,8 +8,8 @@ Each satellite is its own repo under [reverberage](https://github.com/reverberag
 # Clone a satellite
 git clone https://github.com/reverberage/transcriber.git
 cd transcriber
-uv sync --extra dev
-uv run pytest
+pip install -e ".[dev]"
+pytest
 ```
 
 ## Code Style
@@ -20,5 +20,5 @@ All rules are enforced via the project's AGENTS.md (loaded automatically by open
 
 See `README.md` → Satellites table. To add a new satellite:
 1. Create `reverberage/<name>` repo under the org
-2. Follow the existing satellite template (Pydantic + Typer + pytest + uv)
+2. Follow the existing satellite template (Pydantic + Typer + pytest + hatchling)
 3. Register it in the Shipyard project board

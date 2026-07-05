@@ -7,11 +7,11 @@ user-invocable: false
 hub-skill-ids: [review]
 ---
 
-# Skill: Testing
+# Skill: Testing — reverberage
 
 ## Framework
 
-pytest — `uv run pytest -q`
+pytest — `python -m pytest` or `pytest`
 
 ## Rules
 
@@ -31,20 +31,35 @@ PREFER:
 - Factory fixtures over inline setup in each test
 - `conftest.py` for shared fixtures within a package
 
+## Satellite Testing Patterns
 
+### CLI Testing (Typer CliRunner)
+```python
+from typer.testing import CliRunner
+from src.<satellite>.cli import app
 
+runner = CliRunner()
 
+def test_cli_help():
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "Usage" in result.output
+```
 
+### MCP Server Testing
+- Test each `@mcp.tool()` function directly by calling it with typed args
+- Mock external services (APIs, databases) with `unittest.mock` or `pytest-monkeypatch`
+- Test error paths: invalid input, timeout, service unavailable
 
+### Fixture Isolation
+- Use `conftest.py` at package root for shared fixtures
+- Use `scope="function"` by default (fresh state per test)
+- Use `scope="session"` only for truly immutable resources (config, schema)
 
-
-
-## Detected Test Runner
-
-This project uses **vitest run**. Run tests with:
+## Run
 
 ```bash
-vitest run
+pytest
 ```
 
 

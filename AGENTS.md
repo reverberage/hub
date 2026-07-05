@@ -8,9 +8,9 @@
 
 | Command | Run | Category |
 |---------|-----|----------|
-| `test` | `uv run pytest` | testing |
-| `lint` | `uv run ruff check` | linting |
-| `typecheck` | `uv run mypy .` | typechecking |
+| `test` | `pytest` | testing |
+| `lint` | `ruff check` | linting |
+| `typecheck` | `mypy .` | typechecking |
 
 
 ## Project Structure
@@ -63,9 +63,9 @@ When working on this project:
 | `/handoff` | Create agent handoff document |
 
 
-| `/test` | Run `uv run pytest` |
-| `/lint` | Run `uv run ruff check` |
-| `/typecheck` | Run `uv run mypy .` |
+| `/test` | Run `pytest` |
+| `/lint` | Run `ruff check` |
+| `/typecheck` | Run `mypy .` |
 
 
 ## SDD Workflow
@@ -108,9 +108,9 @@ See `.n3rv/skill-registry.md` for models, hub skill IDs, and detailed descriptio
 
 ### Python
 
-- Use Pydantic for data models, Typer for CLIs
-- Use `uv` for dependency management, `hatchling` for builds
-- Each satellite is a standalone package, installable via `pip`
+- Pydantic v2 for data models, Typer for CLIs
+- `hatchling` for builds, `pip` for dependency management (no uv)
+- Each satellite is a standalone package, installable via `pip install -e ".[dev]"`
 - MCP servers use the `mcp` Python SDK
 - A2A agents register with the N3RV hub
 

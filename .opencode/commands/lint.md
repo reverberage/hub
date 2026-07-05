@@ -9,9 +9,9 @@ Run the linter for this project.
 
 
 
-Lint command: `next lint`
+Lint command: `ruff check`
 
-Execute: `!next lint`
+Execute: `!ruff check`
 
 
 
