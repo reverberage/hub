@@ -29,12 +29,12 @@ python .opencode/scripts/scaffold-satellite.py <name>
 Satellites compose into domain-specific workflows. Each satellite reads from
 stdin/files and writes to stdout/files — Unix-style pipelines.
 
-Example journalism pipeline:
+Example pipeline:
 
 ```
 transcriber (audio → text)
     → verify (claim → verdict)
-    → transform (text → formatted article)
+    → transform (text → formatted output)
 ```
 
 The same satellites compose differently for other domains:
