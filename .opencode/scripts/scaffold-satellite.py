@@ -1,9 +1,9 @@
 """Scaffold a new reverberage satellite package.
 
-Usage: python scaffold-satellite.py <name>
+Usage: python scaffold-satellite.py <name> [output-dir]
 
-Creates ../<name>/ with satellite boilerplate (pyproject.toml, CLI, tests).
-Run from the hub repo root.
+Creates <output-dir>/<name>/ with satellite boilerplate (pyproject.toml, CLI, tests).
+If output-dir is omitted, creates ../<name>/ relative to the hub repo root.
 """
 
 import re
@@ -21,9 +21,12 @@ def validate_name(name: str) -> str:
     return name
 
 
-def scaffold(name: str) -> None:
-    hub_root = Path(__file__).resolve().parent.parent.parent
-    target = hub_root.parent / name
+def scaffold(name: str, output_dir: Path | None = None) -> None:
+    if output_dir is not None:
+        target = Path(output_dir) / name
+    else:
+        hub_root = Path(__file__).resolve().parent.parent.parent
+        target = hub_root.parent / name
 
     if target.exists():
         print(f"Error: {target} already exists.")
@@ -148,7 +151,9 @@ pytest
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python scaffold-satellite.py <name>")
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("Usage: python scaffold-satellite.py <name> [output-dir]")
         sys.exit(1)
-    scaffold(validate_name(sys.argv[1]))
+    name = validate_name(sys.argv[1])
+    output_dir = Path(sys.argv[2]) if len(sys.argv) == 3 else None
+    scaffold(name, output_dir)
