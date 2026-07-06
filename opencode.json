@@ -23,19 +23,19 @@
         }
     },
     "mcp": {
-        "n3rverberageerberage-memory": {
+        "n3rverberage-memory": {
             "type": "local",
             "command": [
-                "n3rverberageerberage-memory"
+                "n3rverberage-memory"
             ],
             "environment": {
                 "N3RVERBERAGE_AGENT_SOURCE": "opencode"
             }
         },
-        "n3rverberageerberage-hub": {
+        "n3rverberage-hub": {
             "type": "local",
             "command": [
-                "n3rverberageerberage-hub"
+                "n3rverberage-hub"
             ],
             "environment": {
                 "N3RVERBERAGE_AGENT_SOURCE": "opencode"
