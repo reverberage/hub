@@ -3,7 +3,7 @@
 **This is a preserved design artifact, not an active product.**
 
 lo6 is a conceptual AI-powered newsroom operating system — an "Ableton Live for News."
-It showcases one use case of the [reverberage](../../README.md) toolkit:
+It showcases one use case of the [reverberage](../../../README.md) toolkit:
 how composable satellites (transcriber, verify, scout, transform) can be orchestrated
 into a domain-specific workflow.
 
