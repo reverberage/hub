@@ -24,5 +24,9 @@ htmlcov/
 # Secrets baseline
 .secrets.baseline
 
-# N3RVERBERAGE runtime state — NEVER committed (template-controlled)
+# N3RVERBERAGE — NEVER COMMIT (template-controlled)
 .n3rverberage/
+.opencode/
+.githooks/
+AGENTS.md
+opencode.json
