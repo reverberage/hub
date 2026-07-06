@@ -1,21 +1,29 @@
 # >>> N3RVERBERAGE-MARKER-START
 # AGENTS.md — Coding Standards for hub
 
-## Project Stack
+## Project Identity
 
-**Stack**: generic
+This is the reverberage **hub** — a governance meta-repo. It contains:
+- **Documentation**: satellite protocol, architecture, roadmap, org setup
+- **Orchestration tooling**: SDD pipeline, agents, skills, plugins, commands
+- **Scaffolding**: satellite project generator script
+- **CI & config**: pre-commit hooks, CI workflows
+
+There is **no runtime application code** in this repo. Satellites are independent packages.
+For satellite conventions, see `docs/satellite-protocol.md`.
+
 ## Project Structure
 
-
-
-- `docs/` — Documentation
-
-
+- `docs/` — Governance documentation (protocol, architecture, roadmap)
+- `.opencode/` — Orchestration tooling (agents, skills, plugins, commands, scripts)
+- `.github/` — CI workflows
+- `.n3rverberage/` — Runtime state for n3rverberage hub services (gitignored)
+- `docs/archive/` — Archived design artifacts (e.g. lo6 Newsroom OS concept)
 
 ## Rules
 
 - Never add "Co-Authored-By" or AI attribution to commits. Use conventional commits only.
-- Never build after changes.
+- Never build after changes (no build step in this meta-repo).
 - When asking a question, STOP and wait for response. Never continue or assume answers.
 - Never agree with user claims without verification. Say "let me check" and verify in code/docs first.
 - If user is wrong, explain WHY with evidence. If you were wrong, acknowledge with proof.
@@ -80,39 +88,6 @@ Each phase saves artifacts to memory with `topic_key: sdd-<change_id>-<phase>`. 
 | SDD: verify implementation | SDD Verify | `.opencode/skills/sdd-verify/SKILL.md` |
 | SDD: archive change | SDD Archive | `.opencode/skills/sdd-archive/SKILL.md` |
 | `judgment day`, adversarial review | Judgment Day | `.opencode/skills/judgment-day/SKILL.md` |
-
----
-
----
-
-## reverberage Framework
-
-This template is maintained by [reverberage](https://github.com/reverberage). For satellite projects:
-
-### Project Conventions
-- Each satellite is an independent, pip-installable Python package
-- Build backend: `hatchling` (never uv)
-- CLI framework: `typer` (never argparse directly)
-- Data models: Pydantic v2 `BaseModel`
-- Package manager: `pip` (never uv)
-- Test runner: `pytest` with `typer.testing.CliRunner`
-- Linting: `ruff check`
-- Type checking: `mypy .`
-- License: Apache-2.0
-- Python: >=3.11
-
-### Entry Points Pattern
-```python
-# pyproject.toml
-[project.scripts]
-my-satellite = "my_satellite.cli:main"
-my-satellite-mcp = "my_satellite.mcp:main"
-```
-
-### Commands (bare binaries, no uv prefix)
-- `/test` → `pytest`
-- `/lint` → `ruff check`
-- `/typecheck` → `mypy .`
 
 ---
 
