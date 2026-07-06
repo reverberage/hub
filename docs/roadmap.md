@@ -15,8 +15,8 @@
 Claim in, verdict out. Pluggable backends for fact-checking, legal review,
 research validation, and content moderation.
 
-**Why first**: Broadest market surface. Useful for journalism, legal, research,
-education, and any domain where claims need verification. No crawler infrastructure required.
+**Why first**: Broadest market surface. Useful for research, legal, education,
+compliance, and any domain where claims need verification. No crawler infrastructure required.
 
 ### 2. transform — format conversion & restructuring
 
@@ -40,5 +40,5 @@ time-to-value than verify and transform.
 ## North Star
 
 Every satellite is a composable, MCP-native Python package. No monolith.
-Each does one thing well. Together they form a natural language workshop
+Each does one thing well. Together they form a general-purpose toolkit
 for ingest, generate, verify, and transform across audio, video, and text.

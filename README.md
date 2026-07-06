@@ -1,5 +1,8 @@
 # reverberage — hub
 
+Composable, MCP-native toolkits for audio, video, and text processing.
+Build pipelines. Not monoliths.
+
 The governance meta-repository for the [reverberage](https://github.com/reverberage) ecosystem.
 
 The hub is three things:
