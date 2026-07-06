@@ -29,7 +29,7 @@ def scaffold(name: str) -> None:
         print(f"Error: {target} already exists.")
         sys.exit(1)
 
-    pkg_dir = target / "src" / name.replace("-", "_")
+    pkg_dir = target / "src" / f"rvrb_{name.replace("-", "_")}"
 
     # Create directories
     (target / "tests").mkdir(parents=True)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     (target / "tests" / "__init__.py").write_text("")
 
     # tests/test_<name>.py
-    (target / "tests" / f"test_{name.replace('-', '_')}.py").write_text(f"""\
+    (target / "tests" / f"test_rvrb_{name.replace('-', '_')}.py").write_text(f"""\
 from typer.testing import CliRunner
 from rvrb_{name.replace("-", "_")}.cli import app
 
