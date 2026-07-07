@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rvrb-reverberage"
+version = "0.1.0"
+description = "Reverberage development monorepo — providers + satellites"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=2.0.0",
+    "pydantic>=2.0.0",
+    "typer>=0.12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.14.0",
+]
+mcp = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+rvrb-verify = "rvrb_verify.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rvrb_providers", "src/rvrb_verify"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
