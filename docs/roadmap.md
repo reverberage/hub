@@ -5,20 +5,11 @@
 | Satellite | Package | Status | Description |
 |-----------|---------|--------|-------------|
 | **transcriber** | `rvrb-transcriber` | alpha | AI-powered audio transcription (audio → text) |
+| **verify** | `rvrb-verify` | alpha | Claim verification engine (claim → verdict) |
 
 ## Planned (priority order)
 
-### 1. verify — claim verification engine
-
-`rvrb-verify` | **Priority: HIGH** | Target: Q4 2026
-
-Claim in, verdict out. Pluggable backends for fact-checking, legal review,
-research validation, and content moderation.
-
-**Why first**: Broadest market surface. Useful for research, legal, education,
-compliance, and any domain where claims need verification. No crawler infrastructure required.
-
-### 2. transform — format conversion & restructuring
+### 1. transform — format conversion & restructuring
 
 `rvrb-transform` | **Priority: MEDIUM** | Target: Q1 2027
 
