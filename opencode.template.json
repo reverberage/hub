@@ -1,0 +1,27 @@
+{
+  "model": "qwen/{model}",
+  "provider": {
+    "qwen": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Qwen (Alibaba Model Studio)",
+      "options": {
+        "baseURL": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "apiKey": "{env:DASHSCOPE_API_KEY}"
+      },
+      "models": {
+        "qwen3-coder-plus": { "name": "Qwen3 Coder Plus" },
+        "qwen3-coder-flash": { "name": "Qwen3 Coder Flash" },
+        "qwen3.7-plus": { "name": "Qwen3.7 Plus" },
+        "qwen3.7-max": { "name": "Qwen3.7 Max" },
+        "qwen3.6-plus": { "name": "Qwen3.6 Plus" },
+        "deepseek-v3.2": { "name": "DeepSeek V3.2" }
+      }
+    }
+  },
+  "command": {
+    "sdd-new": {
+      "template": "Run the full 8-phase SDD pipeline for the given change. Use the SDD skills under .opencode/skills/ and delegate to sdd subagents via the task tool for phases 1-5, then implement for phase 6, verify with sdd-verifier for phase 7, and archive with sdd-archiver for phase 8. Run sequentially: explore -> propose -> spec -> design -> tasks -> apply -> verify -> archive. Change: $ARGUMENTS",
+      "description": "Run full Spec-Driven Development pipeline"
+    }
+  }
+}
