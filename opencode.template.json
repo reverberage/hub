@@ -11,10 +11,18 @@
       "models": {
         "qwen3-coder-plus": { "name": "Qwen3 Coder Plus" },
         "qwen3-coder-flash": { "name": "Qwen3 Coder Flash" },
-        "qwen3.7-plus": { "name": "Qwen3.7 Plus" },
+        "qwen3.7-plus": { "name": "Qwen3.7 Plus (multimodal: image+video)" },
         "qwen3.7-max": { "name": "Qwen3.7 Max" },
-        "qwen3.6-plus": { "name": "Qwen3.6 Plus" },
-        "deepseek-v3.2": { "name": "DeepSeek V3.2" }
+        "qwen3.6-plus": { "name": "Qwen3.6 Plus (multimodal: image+video)" },
+        "qwen3.6-flash": { "name": "Qwen3.6 Flash (multimodal: image+video)" },
+        "qwen3-vl-plus": { "name": "Qwen3 VL Plus (vision-language)" },
+        "qwen3-vl-flash": { "name": "Qwen3 VL Flash (vision-language)" },
+        "qwen-vl-max": { "name": "Qwen VL Max (vision-language)" },
+        "qwen-vl-plus": { "name": "Qwen VL Plus (vision-language)" },
+        "qwq-plus": { "name": "QwQ Plus (reasoning)" },
+        "deepseek-v3.2": { "name": "DeepSeek V3.2" },
+        "glm-5.2": { "name": "GLM 5.2" },
+        "kimi-k2.7-code": { "name": "Kimi K2.7 Code" }
       }
     }
   },
