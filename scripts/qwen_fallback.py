@@ -23,10 +23,12 @@ from pathlib import Path
 from typing import Any
 
 from openai import OpenAI
+from dotenv import load_dotenv
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 
 HUB_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(HUB_DIR / ".env")
 TEMPLATE_PATH = HUB_DIR / "opencode.template.json"
 CONFIG_PATH = HUB_DIR / "opencode.json"
 STATE_DIR = HUB_DIR / "scripts"
@@ -284,6 +286,12 @@ def generate_opencode(model_id: str, *, dry_run: bool = False) -> bool:
     if "{model}" in output:
         print("ERROR: {model} still present after substitution.", file=sys.stderr)
         return False
+
+    # Embed API key directly so OpenCode doesn't need env var
+    api_key = os.environ.get("DASHSCOPE_API_KEY", "")
+    if not api_key:
+        print("WARNING: DASHSCOPE_API_KEY not set. OpenCode will need it in env.", file=sys.stderr)
+    output = output.replace("{env:DASHSCOPE_API_KEY}", api_key)
 
     if dry_run:
         print(f"  [DRY-RUN] Would write opencode.json with model=qwen/{model_id}")
