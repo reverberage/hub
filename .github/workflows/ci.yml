@@ -35,7 +35,7 @@ jobs:
         with:
           use-quiet-mode: yes
 
-  test-scaffold:
+  test:
     name: Test scaffold script
     runs-on: ubuntu-latest
     steps:
