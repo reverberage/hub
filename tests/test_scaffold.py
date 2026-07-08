@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-SCAFFOLD_SCRIPT = Path(__file__).resolve().parent.parent / ".opencode" / "scripts" / "scaffold-satellite.py"
+SCAFFOLD_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "scaffold-satellite.py"
 
 
 def run_scaffold(name: str, output_dir: Path | None = None) -> subprocess.CompletedProcess:
@@ -87,6 +87,8 @@ class TestScaffoldOutput:
         assert 'name = "rvrb-test-scout"' in content
         assert "hatchling" in content
         assert "typer" in content
+        assert "pydantic" in content
+        assert "openai" in content
         assert "pytest" in content
         assert "ruff" in content
         assert "mypy" in content
@@ -100,13 +102,16 @@ class TestScaffoldOutput:
         assert '__version__ = "0.1.0"' in content
 
     def test_cli_module(self, scaffolded):
-        """Scaffolded project has a CLI module."""
+        """Scaffolded project has a CLI module with v2 flags."""
         cli_file = scaffolded / "src" / "rvrb_test_scout" / "cli.py"
         assert cli_file.is_file()
         content = cli_file.read_text()
-        assert "typer.Typer" in content or "typer.Typer" in content
+        assert "typer.Typer" in content
         assert "rvrb-test-scout" in content
         assert "def version" in content
+        # v2 protocol: --json and --model flags
+        assert "--json" in content
+        assert "--model" in content
 
     def test_test_file(self, scaffolded):
         """Scaffolded project has a test file with a working test."""
@@ -152,6 +157,45 @@ class TestScaffoldOutput:
 
         # Entry point uses underscore Python import
         assert re.search(r'rvrb-test-scout\s*=\s*"rvrb_test_scout\.cli:app"', content)
+
+    # --- Protocol v2 tests ---
+
+    def test_protocol_v2_mandatory_modules(self, scaffolded):
+        """Mandatory kernel modules exist: __init__, models, provider, engine."""
+        pkg_dir = scaffolded / "src" / "rvrb_test_scout"
+        for module in ["__init__.py", "models.py", "provider.py", "engine.py"]:
+            assert (pkg_dir / module).is_file(), f"Missing mandatory module: {module}"
+
+    def test_models_has_media_types(self, scaffolded):
+        """models.py defines MediaModality, MediaInput, MediaOutput."""
+        models_file = scaffolded / "src" / "rvrb_test_scout" / "models.py"
+        content = models_file.read_text()
+        assert "class MediaModality" in content
+        assert "TEXT" in content
+        assert "AUDIO" in content
+        assert "IMAGE" in content
+        assert "VIDEO" in content
+        assert "class MediaInput" in content
+        assert "class MediaOutput" in content
+
+    def test_provider_has_protocol_and_factory(self, scaffolded):
+        """provider.py defines ModelProvider Protocol and get_provider()."""
+        provider_file = scaffolded / "src" / "rvrb_test_scout" / "provider.py"
+        content = provider_file.read_text()
+        assert "class ModelProvider" in content
+        assert "Protocol" in content
+        assert "DEFAULT_MODEL" in content
+        assert "def get_provider" in content
+        # Fallback pattern for when n3rverberage not installed
+        assert "_DefaultProvider" in content or "ImportError" in content
+
+    def test_engine_has_provider_injection(self, scaffolded):
+        """engine.py has constructor-injected provider with Protocol type hint."""
+        engine_file = scaffolded / "src" / "rvrb_test_scout" / "engine.py"
+        content = engine_file.read_text()
+        assert "class TestScoutEngine" in content
+        assert "def __init__(self, provider" in content
+        assert "self.provider = provider" in content
 
 
 class TestScaffoldIntegration:
