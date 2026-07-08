@@ -98,6 +98,11 @@ SKIP_SET = frozenset(
         "qwen3.7-max",
         "qwen-plus-character-ja",
         "qwen-plus-2025-01-25",
+        # Non-chat models (4) — different API, not usable via chat completions
+        "qvq-max",                  # visual reasoning, streaming-only
+        "qwen-vl-ocr",              # OCR model, requires image input
+        "qwen-vl-ocr-2025-11-20",   # OCR snapshot
+        "wan2.2-kf2v-flash",        # video generation, not a chat model
     }
 )
 
@@ -304,14 +309,7 @@ def generate_opencode(model_id: str, *, dry_run: bool = False) -> bool:
         print("ERROR: {model} still present after substitution.", file=sys.stderr)
         return False
 
-    # Embed API key directly so OpenCode doesn't need env var
-    api_key = os.environ.get("DASHSCOPE_API_KEY", "")
-    if not api_key:
-        print(
-            "WARNING: DASHSCOPE_API_KEY not set. OpenCode will need it in env.",
-            file=sys.stderr,
-        )
-    output = output.replace("{env:DASHSCOPE_API_KEY}", api_key)
+    # Preserve {env:DASHSCOPE_API_KEY} — opencode resolves it at runtime
 
     if dry_run:
         print(f"  [DRY-RUN] Would write opencode.json with model=qwen/{model_id}")
@@ -341,30 +339,40 @@ def get_client() -> OpenAI:
 def probe_model(model_id: str, client: OpenAI) -> tuple[ModelStatus, int | None]:
     """Probe a single model via 1-token request.
 
+    Tries enable_thinking=False first (handles most models).
+    Retries with enable_thinking=True if the model requires it (thinking-only models).
+
     Returns (status, remaining_tokens).
     remaining_tokens is None if not available.
     """
     if model_id in SKIP_SET:
         return ModelStatus.SKIP, None
 
-    try:
-        response = client.chat.completions.create(
-            model=model_id,
-            messages=[{"role": "user", "content": "."}],
-            max_tokens=1,
-            temperature=0,
-        )
-        remaining = _extract_remaining(response)
-        return ModelStatus.ACTIVE, remaining
+    for thinking_mode in (False, True):
+        try:
+            response = client.chat.completions.create(
+                model=model_id,
+                messages=[{"role": "user", "content": "."}],
+                max_tokens=1,
+                temperature=0,
+                extra_body={"enable_thinking": thinking_mode},
+            )
+            remaining = _extract_remaining(response)
+            return ModelStatus.ACTIVE, remaining
 
-    except Exception as exc:
-        error_str = str(exc)
-        if "AllocationQuota.FreeTierOnly" in error_str:
-            return ModelStatus.EXHAUSTED, 0
-        if "401" in error_str or "Unauthorized" in error_str:
-            print("FATAL: Invalid API key.", file=sys.stderr)
-            sys.exit(1)
-        return ModelStatus.ERROR, None
+        except Exception as exc:
+            error_str = str(exc)
+            if "AllocationQuota.FreeTierOnly" in error_str:
+                return ModelStatus.EXHAUSTED, 0
+            if "401" in error_str or "Unauthorized" in error_str:
+                print("FATAL: Invalid API key.", file=sys.stderr)
+                sys.exit(1)
+            # Thinking-only models: retry with enable_thinking=True
+            if thinking_mode is False and "restricted to True" in error_str:
+                continue
+            return ModelStatus.ERROR, None
+
+    return ModelStatus.ERROR, None
 
 
 def _extract_remaining(response: Any) -> int | None:
@@ -477,6 +485,7 @@ def cmd_status(args: argparse.Namespace) -> None:
     skip_count = 0
     error_count = 0
     estimated_remaining = 0
+    headers_seen = 0
     new_exhausted: list[str] = []
 
     print(f"Probing {len(MODELS)} models...\n", file=sys.stderr)
@@ -503,6 +512,7 @@ def cmd_status(args: argparse.Namespace) -> None:
             active_count += 1
             if remaining is not None:
                 estimated_remaining += remaining
+                headers_seen += 1
             results.append({"model": mid, "status": "ACTIVE", "remaining": remaining})
             print("ACTIVE", file=sys.stderr)
         elif status == ModelStatus.EXHAUSTED:
@@ -534,7 +544,8 @@ def cmd_status(args: argparse.Namespace) -> None:
             "models": results,
             "active_model": active_model.model_id,
             "active_tier": active_model.tier.name,
-            "estimated_remaining": estimated_remaining,
+            "estimated_remaining": estimated_remaining if headers_seen > 0 else None,
+            "quota_header_available": headers_seen > 0,
         }
         print(json.dumps(output, indent=2))
     else:
@@ -554,7 +565,10 @@ def cmd_status(args: argparse.Namespace) -> None:
             f"{error_count} errors"
         )
         print(f"Active model: {active_model.model_id} (Tier {active_model.tier.value})")
-        print(f"Est. remaining: ~{estimated_remaining:,} tokens")
+        if headers_seen > 0:
+            print(f"Est. remaining: ~{estimated_remaining:,} tokens")
+        else:
+            print("Est. remaining: N/A (header not available on this endpoint)")
 
     if active_count == 0 and error_count == len(MODELS):
         print("Cannot reach DashScope API.", file=sys.stderr)
