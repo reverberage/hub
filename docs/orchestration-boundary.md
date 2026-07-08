@@ -113,6 +113,18 @@ The `services/aigc/multimodal-generation/generation` endpoint (Qwen-TTS) works w
 DashScope key, including `sk-ws-*` workspace keys. `cosyvoice-*` models are WebSocket-only
 and unavailable via the workspace's HTTP API.
 
+### IPv6 Compatibility
+
+| Endpoint | IPv6 (AAAA) | Status |
+|----------|:-----------:|--------|
+| `dashscope-intl.aliyuncs.com` (Singapore) | ❌ No AAAA | IPv6-only environments cannot reach this endpoint |
+| `dashscope.aliyuncs.com` (China) | ✅ Has AAAA | Only accepts China-region API keys |
+| `{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com` (workspace) | ❓ Untested | May have AAAA; verify before relying on IPv6 |
+
+**Recommendation:** Use workspace-specific domains (`{WorkspaceId}.ap-southeast-1.maas.aliyuncs.com`)
+for new deployments. IPv6-only environments need a dual-stack host or IPv4 proxy/gateway to reach
+Singapore-based endpoints.
+
 Model rotation changes opencode's model. FallbackProvider changes the satellite's model. Same quota,
 different consumers.
 

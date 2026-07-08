@@ -1,0 +1,2051 @@
+{
+  "version": 1,
+  "updated": "2026-07-08",
+  "expires": "2026-09-28",
+  "total_text_tokens": 81000000,
+  "models": [
+    {
+      "model_id": "cosyvoice-v3-plus",
+      "tier": 0,
+      "priority": 1,
+      "family": "cosyvoice",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "cosyvoice-v3-flash",
+      "tier": 0,
+      "priority": 2,
+      "family": "cosyvoice",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash",
+      "tier": 0,
+      "priority": 3,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash-2025-09-18",
+      "tier": 0,
+      "priority": 4,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash-2025-11-27",
+      "tier": 0,
+      "priority": 5,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash-realtime",
+      "tier": 0,
+      "priority": 6,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash-realtime-2025-09-18",
+      "tier": 0,
+      "priority": 7,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-flash-realtime-2025-11-27",
+      "tier": 0,
+      "priority": 8,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-instruct-flash",
+      "tier": 0,
+      "priority": 9,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-instruct-flash-2026-01-26",
+      "tier": 0,
+      "priority": 10,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-instruct-flash-realtime",
+      "tier": 0,
+      "priority": 11,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-instruct-flash-realtime-2026-01-22",
+      "tier": 0,
+      "priority": 12,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vc-2026-01-15",
+      "tier": 0,
+      "priority": 13,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vc-2026-01-22",
+      "tier": 0,
+      "priority": 14,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vd-2026-01-15",
+      "tier": 0,
+      "priority": 15,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vd-2026-01-26",
+      "tier": 0,
+      "priority": 16,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vd-realtime-2025-12-16",
+      "tier": 0,
+      "priority": 17,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-tts-vd-realtime-2026-01-15",
+      "tier": 0,
+      "priority": 18,
+      "family": "qwen-tts",
+      "context_length": 0,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "modality": "audio",
+      "pricing": {},
+      "quota": {
+        "total": 10000,
+        "unit": "characters",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-plus",
+      "tier": 1,
+      "priority": 1,
+      "family": "qwen3-coder",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-flash",
+      "tier": 1,
+      "priority": 2,
+      "family": "qwen3-coder",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-next",
+      "tier": 1,
+      "priority": 3,
+      "family": "qwen3-coder",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-plus-2025-07-22",
+      "tier": 1,
+      "priority": 4,
+      "family": "qwen3-coder",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-plus-2025-09-23",
+      "tier": 1,
+      "priority": 5,
+      "family": "qwen3-coder",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-flash-2025-07-28",
+      "tier": 1,
+      "priority": 6,
+      "family": "qwen3-coder",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-480b-a35b-instruct",
+      "tier": 1,
+      "priority": 7,
+      "family": "qwen3-coder",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-coder-30b-a3b-instruct",
+      "tier": 1,
+      "priority": 8,
+      "family": "qwen3-coder",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-plus-2026-05-26",
+      "tier": 2,
+      "priority": 1,
+      "family": "qwen3.7",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-max-2026-06-08",
+      "tier": 2,
+      "priority": 2,
+      "family": "qwen3.7",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-max-2026-05-20",
+      "tier": 2,
+      "priority": 3,
+      "family": "qwen3.7",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-max-preview",
+      "tier": 2,
+      "priority": 4,
+      "family": "qwen3.7",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-max-2026-05-17",
+      "tier": 2,
+      "priority": 5,
+      "family": "qwen3.7",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-max-preview",
+      "tier": 2,
+      "priority": 6,
+      "family": "qwen3.6",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.7-plus",
+      "tier": 2,
+      "priority": 7,
+      "family": "qwen3.7",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.6
+      },
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen3.7-max",
+      "tier": 2,
+      "priority": 8,
+      "family": "qwen3.7",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 2.5,
+        "output_per_1m": 7.5
+      },
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen3.6-plus-2026-04-02",
+      "tier": 3,
+      "priority": 1,
+      "family": "qwen3.6",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-flash-2026-04-16",
+      "tier": 3,
+      "priority": 2,
+      "family": "qwen3.6",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-plus-2026-04-20",
+      "tier": 3,
+      "priority": 3,
+      "family": "qwen3.5",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-max-2026-01-23",
+      "tier": 3,
+      "priority": 4,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-plus",
+      "tier": 3,
+      "priority": 5,
+      "family": "qwen3.6",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-flash",
+      "tier": 3,
+      "priority": 6,
+      "family": "qwen3.6",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 2.4
+      },
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "deepseek-v3.2",
+      "tier": 4,
+      "priority": 1,
+      "family": "deepseek",
+      "context_length": 131072,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "kimi-k2.7-code",
+      "tier": 4,
+      "priority": 2,
+      "family": "kimi",
+      "context_length": 131072,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "glm-5.2",
+      "tier": 4,
+      "priority": 3,
+      "family": "glm",
+      "context_length": 131072,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "glm-5.1",
+      "tier": 4,
+      "priority": 4,
+      "family": "glm",
+      "context_length": 131072,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "deepseek-v4-pro",
+      "tier": 4,
+      "priority": 5,
+      "family": "deepseek",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "deepseek-v4-flash",
+      "tier": 4,
+      "priority": 6,
+      "family": "deepseek",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qvq-max",
+      "tier": 5,
+      "priority": 1,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-flash-2025-07-28",
+      "tier": 5,
+      "priority": 2,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-flash-character",
+      "tier": 5,
+      "priority": 3,
+      "family": "qwen-character",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-mt-flash",
+      "tier": 5,
+      "priority": 4,
+      "family": "qwen-mt",
+      "context_length": 16384,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-mt-lite",
+      "tier": 5,
+      "priority": 5,
+      "family": "qwen-mt",
+      "context_length": 16384,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-mt-plus",
+      "tier": 5,
+      "priority": 6,
+      "family": "qwen-mt",
+      "context_length": 16384,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-mt-turbo",
+      "tier": 5,
+      "priority": 7,
+      "family": "qwen-mt",
+      "context_length": 16384,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-2025-04-28",
+      "tier": 5,
+      "priority": 8,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-2025-07-14",
+      "tier": 5,
+      "priority": 9,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-2025-07-28",
+      "tier": 5,
+      "priority": 10,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-2025-09-11",
+      "tier": 5,
+      "priority": 11,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-character",
+      "tier": 5,
+      "priority": 12,
+      "family": "qwen-character",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-plus-latest",
+      "tier": 5,
+      "priority": 13,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-vl-max",
+      "tier": 5,
+      "priority": 14,
+      "family": "qwen-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen-vl-ocr",
+      "tier": 5,
+      "priority": 15,
+      "family": "qwen-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-vl-ocr-2025-11-20",
+      "tier": 5,
+      "priority": 16,
+      "family": "qwen-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-vl-plus",
+      "tier": 5,
+      "priority": 17,
+      "family": "qwen-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-14b",
+      "tier": 5,
+      "priority": 18,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-235b-a22b",
+      "tier": 5,
+      "priority": 19,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-235b-a22b-instruct-2507",
+      "tier": 5,
+      "priority": 20,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-235b-a22b-thinking-2507",
+      "tier": 5,
+      "priority": 21,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-30b-a3b",
+      "tier": 5,
+      "priority": 22,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-30b-a3b-instruct-2507",
+      "tier": 5,
+      "priority": 23,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-30b-a3b-thinking-2507",
+      "tier": 5,
+      "priority": 24,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-32b",
+      "tier": 5,
+      "priority": 25,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-8b",
+      "tier": 5,
+      "priority": 26,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-max",
+      "tier": 5,
+      "priority": 27,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-max-2025-09-23",
+      "tier": 5,
+      "priority": 28,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-max-preview",
+      "tier": 5,
+      "priority": 29,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-next-80b-a3b-instruct",
+      "tier": 5,
+      "priority": 30,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-next-80b-a3b-thinking",
+      "tier": 5,
+      "priority": 31,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-235b-a22b-instruct",
+      "tier": 5,
+      "priority": 32,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-235b-a22b-thinking",
+      "tier": 5,
+      "priority": 33,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-30b-a3b-instruct",
+      "tier": 5,
+      "priority": 34,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-30b-a3b-thinking",
+      "tier": 5,
+      "priority": 35,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-32b-instruct",
+      "tier": 5,
+      "priority": 36,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-32b-thinking",
+      "tier": 5,
+      "priority": 37,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-8b-instruct",
+      "tier": 5,
+      "priority": 38,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-8b-thinking",
+      "tier": 5,
+      "priority": 39,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-flash",
+      "tier": 5,
+      "priority": 40,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-flash-2025-10-15",
+      "tier": 5,
+      "priority": 41,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-flash-2026-01-22",
+      "tier": 5,
+      "priority": 42,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-plus",
+      "tier": 5,
+      "priority": 43,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-plus-2025-09-23",
+      "tier": 5,
+      "priority": 44,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3-vl-plus-2025-12-19",
+      "tier": 5,
+      "priority": 45,
+      "family": "qwen3-vl",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": true,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-122b-a10b",
+      "tier": 5,
+      "priority": 46,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-27b",
+      "tier": 5,
+      "priority": 47,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-35b-a3b",
+      "tier": 5,
+      "priority": 48,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-397b-a17b",
+      "tier": 5,
+      "priority": 49,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-flash",
+      "tier": 5,
+      "priority": 50,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-flash-2026-02-23",
+      "tier": 5,
+      "priority": 51,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-plus",
+      "tier": 5,
+      "priority": 52,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.5-plus-2026-02-15",
+      "tier": 5,
+      "priority": 53,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-27b",
+      "tier": 5,
+      "priority": 54,
+      "family": "qwen3.6",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwen3.6-35b-a3b",
+      "tier": 5,
+      "priority": 55,
+      "family": "qwen3.6",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "qwq-plus",
+      "tier": 5,
+      "priority": 56,
+      "family": "qwq",
+      "context_length": 262144,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": false
+    },
+    {
+      "model_id": "wan2.2-kf2v-flash",
+      "tier": 5,
+      "priority": 57,
+      "family": "qwen3",
+      "context_length": 262144,
+      "thinking": false,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 1000000,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-plus",
+      "tier": 5,
+      "priority": 58,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {
+        "input_per_1m": 0.4,
+        "output_per_1m": 1.2
+      },
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-max",
+      "tier": 5,
+      "priority": 59,
+      "family": "qwen3",
+      "context_length": 131072,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-turbo",
+      "tier": 5,
+      "priority": 60,
+      "family": "qwen3",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-flash",
+      "tier": 5,
+      "priority": 61,
+      "family": "qwen3",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-plus-character-ja",
+      "tier": 5,
+      "priority": 62,
+      "family": "qwen-character",
+      "context_length": 32768,
+      "thinking": false,
+      "vision": false,
+      "tool_use": false,
+      "structured_output": false,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    },
+    {
+      "model_id": "qwen-plus-2025-01-25",
+      "tier": 5,
+      "priority": 63,
+      "family": "qwen-plus",
+      "context_length": 1048576,
+      "thinking": true,
+      "vision": false,
+      "tool_use": true,
+      "structured_output": true,
+      "pricing": {},
+      "quota": {
+        "total": 0,
+        "unit": "tokens",
+        "expires": "2026-09-28"
+      },
+      "skip": true
+    }
+  ]
+}
