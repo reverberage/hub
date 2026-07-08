@@ -137,7 +137,14 @@ def _load_catalog() -> tuple[list[ModelInfo], list[str]]:
         mid = entry["model_id"]
         # Use skip flag from catalog for initial status
         status = ModelStatus.SKIP if entry.get("skip", False) else ModelStatus.UNKNOWN
-        models.append(ModelInfo(model_id=mid, tier=tier, priority=entry.get("priority", 0), status=status))
+        models.append(
+            ModelInfo(
+                model_id=mid,
+                tier=tier,
+                priority=entry.get("priority", 0),
+                status=status,
+            )
+        )
 
     # Sort by tier then priority (matching original order)
     models.sort(key=lambda m: (m.tier.value, m.priority))

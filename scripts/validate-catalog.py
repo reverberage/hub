@@ -9,9 +9,18 @@ HUB_DIR = Path(__file__).resolve().parent.parent
 CATALOG_PATH = HUB_DIR / "data" / "model-catalog.json"
 
 REQUIRED_MODEL_FIELDS = [
-    "model_id", "tier", "priority", "family", "context_length",
-    "thinking", "vision", "tool_use", "structured_output",
-    "pricing", "quota", "skip",
+    "model_id",
+    "tier",
+    "priority",
+    "family",
+    "context_length",
+    "thinking",
+    "vision",
+    "tool_use",
+    "structured_output",
+    "pricing",
+    "quota",
+    "skip",
 ]
 
 REQUIRED_QUOTA_FIELDS = ["total", "unit", "expires"]
