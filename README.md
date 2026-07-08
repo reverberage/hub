@@ -20,7 +20,7 @@ Each satellite is an independent `pip install`-able Python package — usable al
 | Satellite | Package | Status |
 |-----------|---------|--------|
 | **transcriber** | `rvrb-transcriber` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
-| **verify** | `rvrb-verify` | planned |
+| **verify** | `rvrb-verify` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 | **transform** | `rvrb-transform` | planned |
 | **scout** | `rvrb-scout` | planned |
 
