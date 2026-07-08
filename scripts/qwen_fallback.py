@@ -99,10 +99,10 @@ SKIP_SET = frozenset(
         "qwen-plus-character-ja",
         "qwen-plus-2025-01-25",
         # Non-chat models (4) — different API, not usable via chat completions
-        "qvq-max",                  # visual reasoning, streaming-only
-        "qwen-vl-ocr",              # OCR model, requires image input
-        "qwen-vl-ocr-2025-11-20",   # OCR snapshot
-        "wan2.2-kf2v-flash",        # video generation, not a chat model
+        "qvq-max",  # visual reasoning, streaming-only
+        "qwen-vl-ocr",  # OCR model, requires image input
+        "qwen-vl-ocr-2025-11-20",  # OCR snapshot
+        "wan2.2-kf2v-flash",  # video generation, not a chat model
     }
 )
 
