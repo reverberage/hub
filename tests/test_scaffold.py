@@ -7,14 +7,10 @@ from pathlib import Path
 
 import pytest
 
-SCAFFOLD_SCRIPT = (
-    Path(__file__).resolve().parent.parent / "scripts" / "scaffold-satellite.py"
-)
+SCAFFOLD_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "scaffold-satellite.py"
 
 
-def run_scaffold(
-    name: str, output_dir: Path | None = None
-) -> subprocess.CompletedProcess:
+def run_scaffold(name: str, output_dir: Path | None = None) -> subprocess.CompletedProcess:
     """Run the scaffold script and return the result."""
     args = [sys.executable, str(SCAFFOLD_SCRIPT), name]
     if output_dir:
@@ -231,9 +227,7 @@ class TestScaffoldIntegration:
             text=True,
             cwd=scaffolded,
         )
-        assert result.returncode == 0, (
-            f"Tests failed:\n{result.stdout}\n{result.stderr}"
-        )
+        assert result.returncode == 0, f"Tests failed:\n{result.stdout}\n{result.stderr}"
 
     def test_cli_help_works(self, scaffolded):
         """The scaffolded CLI should show help."""

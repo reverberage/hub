@@ -16,13 +16,13 @@ import json
 import os
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 
@@ -81,6 +81,67 @@ class TrackingEntry:
     action: str
     remaining_estimate: int = -1
     notes: str = ""
+
+
+# ── MAGI Memory Integration ────────────────────────────────────────────────
+
+
+def log_quota_to_magi(
+    model_id: str,
+    action: str,
+    remaining_tokens: int | None = None,
+    metadata: dict | None = None,
+) -> None:
+    """Log quota event to MAGI memory system.
+
+    Parameters
+    ----------
+    model_id : str
+        The model that was activated/exhausted/probed.
+    action : str
+        Event type: 'activate', 'exhaust', 'probe_ok', 'probe_fail', 'rotate'.
+    remaining_tokens : int | None
+        Remaining quota if available from API headers.
+    metadata : dict | None
+        Additional context (tier, rotation_index, etc.).
+    """
+    try:
+        from n3rverberage.config import load_runtime_settings
+        from n3rverberage.mcp.memory_service import MemoryService
+
+        settings = load_runtime_settings(HUB_DIR)
+        service = MemoryService(settings)
+        topic_key = f"quota-{model_id}-{datetime.now(UTC).strftime('%Y-%m-%d')}"
+
+        content = {
+            "model_id": model_id,
+            "action": action,
+            "remaining_tokens": remaining_tokens,
+            "timestamp": datetime.now(UTC).isoformat(),
+            "metadata": metadata or {},
+        }
+
+        service.memory_save(
+            topic_key=topic_key,
+            title=f"Quota {action}: {model_id}",
+            content=json.dumps(content, indent=2),
+            type="config",
+            scope="project",
+        )
+        print(f"  [MAGI] Logged quota event to memory: {topic_key}", file=sys.stderr)
+
+    except ImportError:
+        # n3rverberage not available - skip logging
+        print(
+            "  [MAGI] Skipping memory log (n3rverberage not installed)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        # Don't fail the rotation - just warn
+        print(
+            f"  [MAGI] Warning: Failed to log to memory: {exc}",
+            file=sys.stderr,
+        )
 
 
 # ── SKIP SET (10 models: 6 exhausted + 4 unsupported) ──────────────────────
@@ -167,9 +228,7 @@ def load_state() -> RotationState:
         data = json.loads(STATE_PATH.read_text())
         return RotationState(**data)
     except (json.JSONDecodeError, TypeError, KeyError) as exc:
-        print(
-            f"WARNING: state file corrupted ({exc}), reinitializing.", file=sys.stderr
-        )
+        print(f"WARNING: state file corrupted ({exc}), reinitializing.", file=sys.stderr)
         return _fresh_state()
 
 
@@ -178,7 +237,7 @@ def _fresh_state() -> RotationState:
         active_model_index=0,
         active_model_id=MODELS[0].model_id,
         exhausted_set=list(SKIP_SET),
-        last_rotation=datetime.now(timezone.utc).isoformat(),
+        last_rotation=datetime.now(UTC).isoformat(),
     )
 
 
@@ -316,9 +375,7 @@ def write_tracking(state: RotationState, entries: list[dict] | None = None) -> N
     """Write or rewrite docs/stage-a-tracking.md."""
     days_remaining = _days_until(EXPIRATION_DATE)
     active_count = sum(
-        1
-        for m in MODELS
-        if m.model_id not in state.exhausted_set and m.model_id not in SKIP_SET
+        1 for m in MODELS if m.model_id not in state.exhausted_set and m.model_id not in SKIP_SET
     )
     exhausted_count = len([m for m in MODELS if m.model_id in state.exhausted_set])
     skip_count = len(SKIP_SET)
@@ -353,8 +410,8 @@ def write_tracking(state: RotationState, entries: list[dict] | None = None) -> N
 
 
 def _days_until(date_str: str) -> int:
-    target = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    now = datetime.now(timezone.utc)
+    target = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=UTC)
+    now = datetime.now(UTC)
     return max(0, (target - now).days)
 
 
@@ -369,8 +426,7 @@ def _format_activity_log(entries: list[dict] | None) -> str:
             rem = e.get("remaining_estimate", -1)
             rem_str = f"{rem:,}" if isinstance(rem, int) and rem >= 0 else "—"
             lines.append(
-                f"| {ts} | {e['model_id']} | {e['action']} | {rem_str} "
-                f"| {e.get('notes', '')} |"
+                f"| {ts} | {e['model_id']} | {e['action']} | {rem_str} | {e.get('notes', '')} |"
             )
     return "\n".join(lines) + "\n"
 
@@ -386,9 +442,7 @@ def _format_roster(state: RotationState) -> str:
             status = "ACTIVE"
         else:
             status = "UNKNOWN"
-        lines.append(
-            f"| {i + 1} | {m.tier.value} | {m.model_id} | {status} | 1,000,000 |"
-        )
+        lines.append(f"| {i + 1} | {m.tier.value} | {m.model_id} | {status} | 1,000,000 |")
     return "\n".join(lines)
 
 
@@ -473,11 +527,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"\n{'Model':50s} {'Status':15s} {'Remaining':>10s}")
         print("-" * 78)
         for r in results:
-            rem = (
-                f"{r['remaining']:>10,}"
-                if isinstance(r.get("remaining"), int)
-                else "         —"
-            )
+            rem = f"{r['remaining']:>10,}" if isinstance(r.get("remaining"), int) else "         —"
             print(f"{r['model']:50s} {r['status']:15s} {rem}")
         print("-" * 78)
         print(
@@ -510,10 +560,21 @@ def cmd_rotate(args: argparse.Namespace) -> None:
             if m.model_id == args.model:
                 state.active_model_index = i
                 state.active_model_id = m.model_id
-                state.last_rotation = datetime.now(timezone.utc).isoformat()
+                state.last_rotation = datetime.now(UTC).isoformat()
                 if not args.dry_run:
                     generate_opencode(m.model_id, dry_run=False)
                     save_state(state)
+                    # Log to MAGI: manual model activation
+                    log_quota_to_magi(
+                        model_id=m.model_id,
+                        action="activate",
+                        remaining_tokens=None,
+                        metadata={
+                            "tier": m.tier.value,
+                            "rotation_index": i,
+                            "manual_override": True,
+                        },
+                    )
                 print(f"Set active model to {m.model_id} (Tier {m.tier.value}).")
                 return
         print(f"ERROR: Model '{args.model}' not found in catalog.", file=sys.stderr)
@@ -559,6 +620,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
 
         print(f"  Probing {candidate.model_id} ... ", end="")
         sys.stdout.flush()
+        assert client is not None  # dry-run exits loop before reaching here
         status, _ = probe_model(candidate.model_id, client)
 
         if status == ModelStatus.ACTIVE:
@@ -585,7 +647,32 @@ def cmd_rotate(args: argparse.Namespace) -> None:
     # Update state
     state.active_model_index = MODEL_IDS.index(found_model.model_id)
     state.active_model_id = found_model.model_id
-    state.last_rotation = datetime.now(timezone.utc).isoformat()
+    state.last_rotation = datetime.now(UTC).isoformat()
+
+    # Log to MAGI: exhaustion of previous model
+    if not args.dry_run:
+        log_quota_to_magi(
+            model_id=current.model_id,
+            action="exhaust",
+            remaining_tokens=0,
+            metadata={
+                "tier": current.tier.value,
+                "rotation_index": state.active_model_index,
+                "reason": "AllocationQuota.FreeTierOnly",
+            },
+        )
+
+        # Log to MAGI: activation of new model
+        log_quota_to_magi(
+            model_id=found_model.model_id,
+            action="activate",
+            remaining_tokens=None,  # Will be discovered on first use
+            metadata={
+                "tier": found_model.tier.value,
+                "rotation_index": state.active_model_index,
+                "previous_model": current.model_id,
+            },
+        )
 
     # Regenerate opencode.json
     print("Regenerating opencode.json from template. Manual edits will be lost.")
@@ -598,8 +685,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
         generate_opencode(found_model.model_id, dry_run=True)
 
     print(
-        f"Rotated to {found_model.model_id} (Tier {found_model.tier.value}). "
-        f"opencode.json updated."
+        f"Rotated to {found_model.model_id} (Tier {found_model.tier.value}). opencode.json updated."
     )
 
 
@@ -671,12 +757,8 @@ def main() -> None:
         action="store_true",
         help="Force rotation regardless of current model status",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="Output as JSON (for automation)"
-    )
-    parser.add_argument(
-        "--model", type=str, help="Override active model directly, skip rotation"
-    )
+    parser.add_argument("--json", action="store_true", help="Output as JSON (for automation)")
+    parser.add_argument("--model", type=str, help="Override active model directly, skip rotation")
     parser.add_argument(
         "--dry-run",
         action="store_true",
