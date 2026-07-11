@@ -83,6 +83,67 @@ class TrackingEntry:
     notes: str = ""
 
 
+# ── MAGI Memory Integration ────────────────────────────────────────────────
+
+
+def log_quota_to_magi(
+    model_id: str,
+    action: str,
+    remaining_tokens: int | None = None,
+    metadata: dict | None = None,
+) -> None:
+    """Log quota event to MAGI memory system.
+
+    Parameters
+    ----------
+    model_id : str
+        The model that was activated/exhausted/probed.
+    action : str
+        Event type: 'activate', 'exhaust', 'probe_ok', 'probe_fail', 'rotate'.
+    remaining_tokens : int | None
+        Remaining quota if available from API headers.
+    metadata : dict | None
+        Additional context (tier, rotation_index, etc.).
+    """
+    try:
+        from n3rverberage.config import load_runtime_settings
+        from n3rverberage.mcp.memory_service import MemoryService
+
+        settings = load_runtime_settings(HUB_DIR)
+        service = MemoryService(settings)
+        topic_key = f"quota-{model_id}-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}"
+
+        content = {
+            "model_id": model_id,
+            "action": action,
+            "remaining_tokens": remaining_tokens,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "metadata": metadata or {},
+        }
+
+        service.memory_save(
+            topic_key=topic_key,
+            title=f"Quota {action}: {model_id}",
+            content=json.dumps(content, indent=2),
+            type="config",
+            scope="project",
+        )
+        print(f"  [MAGI] Logged quota event to memory: {topic_key}", file=sys.stderr)
+
+    except ImportError:
+        # n3rverberage not available - skip logging
+        print(
+            "  [MAGI] Skipping memory log (n3rverberage not installed)",
+            file=sys.stderr,
+        )
+    except Exception as exc:
+        # Don't fail the rotation - just warn
+        print(
+            f"  [MAGI] Warning: Failed to log to memory: {exc}",
+            file=sys.stderr,
+        )
+
+
 # ── SKIP SET (10 models: 6 exhausted + 4 unsupported) ──────────────────────
 
 SKIP_SET = frozenset(
@@ -514,6 +575,17 @@ def cmd_rotate(args: argparse.Namespace) -> None:
                 if not args.dry_run:
                     generate_opencode(m.model_id, dry_run=False)
                     save_state(state)
+                    # Log to MAGI: manual model activation
+                    log_quota_to_magi(
+                        model_id=m.model_id,
+                        action="activate",
+                        remaining_tokens=None,
+                        metadata={
+                            "tier": m.tier.value,
+                            "rotation_index": i,
+                            "manual_override": True,
+                        },
+                    )
                 print(f"Set active model to {m.model_id} (Tier {m.tier.value}).")
                 return
         print(f"ERROR: Model '{args.model}' not found in catalog.", file=sys.stderr)
@@ -586,6 +658,31 @@ def cmd_rotate(args: argparse.Namespace) -> None:
     state.active_model_index = MODEL_IDS.index(found_model.model_id)
     state.active_model_id = found_model.model_id
     state.last_rotation = datetime.now(timezone.utc).isoformat()
+
+    # Log to MAGI: exhaustion of previous model
+    if not args.dry_run:
+        log_quota_to_magi(
+            model_id=current.model_id,
+            action="exhaust",
+            remaining_tokens=0,
+            metadata={
+                "tier": current.tier.value,
+                "rotation_index": state.active_model_index,
+                "reason": "AllocationQuota.FreeTierOnly",
+            },
+        )
+
+        # Log to MAGI: activation of new model
+        log_quota_to_magi(
+            model_id=found_model.model_id,
+            action="activate",
+            remaining_tokens=None,  # Will be discovered on first use
+            metadata={
+                "tier": found_model.tier.value,
+                "rotation_index": state.active_model_index,
+                "previous_model": current.model_id,
+            },
+        )
 
     # Regenerate opencode.json
     print("Regenerating opencode.json from template. Manual edits will be lost.")
