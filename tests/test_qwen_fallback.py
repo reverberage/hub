@@ -580,7 +580,21 @@ class TestLogQuotaToMagi:
 
     def test_handles_unexpected_error_gracefully(self, capsys):
         """If any exception occurs in the try block, warn but don't crash."""
-        with patch.object(qwf, "datetime") as mock_dt:
+        # Need n3rverberage available so we get past the ImportError guard
+        # to the actual exception handler
+        fake_n3rv = MagicMock()
+        with (
+            patch.dict(
+                "sys.modules",
+                {
+                    "n3rverberage": fake_n3rv,
+                    "n3rverberage.config": fake_n3rv,
+                    "n3rverberage.mcp": fake_n3rv,
+                    "n3rverberage.mcp.memory_service": fake_n3rv,
+                },
+            ),
+            patch.object(qwf, "datetime") as mock_dt,
+        ):
             mock_dt.now.side_effect = Exception("unexpected error")
             qwf.log_quota_to_magi("test-model", "activate")
         captured = capsys.readouterr()
