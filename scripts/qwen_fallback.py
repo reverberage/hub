@@ -631,6 +631,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
 
         print(f"  Probing {candidate.model_id} ... ", end="")
         sys.stdout.flush()
+        assert client is not None  # dry-run exits loop before reaching here
         status, _ = probe_model(candidate.model_id, client)
 
         if status == ModelStatus.ACTIVE:
