@@ -407,7 +407,7 @@ class TestProbeModel:
         client.chat.completions.create.side_effect = side_effect
 
         # Not in SKIP_SET, so it will go through probe logic
-        status, remaining = qwf.probe_model("thinking-only-model", client)
+        status, _ = qwf.probe_model("thinking-only-model", client)
         assert status == qwf.ModelStatus.ACTIVE
 
     def test_both_thinking_modes_fail(self):
@@ -524,7 +524,7 @@ class TestFormatRoster:
         state = qwf.RotationState(
             active_model_index=0,
             active_model_id=models[0].model_id,
-            exhausted_set=list(qwf.SKIP_SET) + ["beta-2"],
+            exhausted_set=[*qwf.SKIP_SET, "beta-2"],
             last_rotation="",
         )
         result = qwf._format_roster(state)
@@ -691,7 +691,6 @@ class TestCmdRotate:
         """Should skip already-exhausted models during rotation."""
         # Pre-populate state so alpha-1 is exhausted, beta-2 already exhausted.
         # Rotation: alpha-1 (current, exhausted) → beta-2 (already exhausted) → gamma-3 (active)
-        models, _ = small_catalog
 
         def mock_probe(model_id, client):
             if model_id == "alpha-1":
@@ -733,17 +732,16 @@ class TestCmdRotate:
         """--model should set active model directly without probing."""
         args = _make_args(rotate=True, model="gamma-3")
 
-        with patch.object(qwf, "MODEL_IDS", ["alpha-1", "beta-2", "gamma-3"]):
-            with patch.object(
-                qwf,
-                "MODELS",
-                [
-                    qwf.ModelInfo("alpha-1", qwf.Tier.CODER, 1),
-                    qwf.ModelInfo("beta-2", qwf.Tier.CODER, 2),
-                    qwf.ModelInfo("gamma-3", qwf.Tier.FLAGSHIP, 5),
-                ],
-            ):
-                qwf.cmd_rotate(args)
+        with patch.object(qwf, "MODEL_IDS", ["alpha-1", "beta-2", "gamma-3"]), patch.object(
+            qwf,
+            "MODELS",
+            [
+                qwf.ModelInfo("alpha-1", qwf.Tier.CODER, 1),
+                qwf.ModelInfo("beta-2", qwf.Tier.CODER, 2),
+                qwf.ModelInfo("gamma-3", qwf.Tier.FLAGSHIP, 5),
+            ],
+        ):
+            qwf.cmd_rotate(args)
 
         state = qwf.load_state()
         assert state.active_model_id == "gamma-3"

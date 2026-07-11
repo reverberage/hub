@@ -16,13 +16,13 @@ import json
 import os
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 
@@ -111,13 +111,13 @@ def log_quota_to_magi(
 
         settings = load_runtime_settings(HUB_DIR)
         service = MemoryService(settings)
-        topic_key = f"quota-{model_id}-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}"
+        topic_key = f"quota-{model_id}-{datetime.now(UTC).strftime('%Y-%m-%d')}"
 
         content = {
             "model_id": model_id,
             "action": action,
             "remaining_tokens": remaining_tokens,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "metadata": metadata or {},
         }
 
@@ -239,7 +239,7 @@ def _fresh_state() -> RotationState:
         active_model_index=0,
         active_model_id=MODELS[0].model_id,
         exhausted_set=list(SKIP_SET),
-        last_rotation=datetime.now(timezone.utc).isoformat(),
+        last_rotation=datetime.now(UTC).isoformat(),
     )
 
 
@@ -414,8 +414,8 @@ def write_tracking(state: RotationState, entries: list[dict] | None = None) -> N
 
 
 def _days_until(date_str: str) -> int:
-    target = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    now = datetime.now(timezone.utc)
+    target = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=UTC)
+    now = datetime.now(UTC)
     return max(0, (target - now).days)
 
 
@@ -571,7 +571,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
             if m.model_id == args.model:
                 state.active_model_index = i
                 state.active_model_id = m.model_id
-                state.last_rotation = datetime.now(timezone.utc).isoformat()
+                state.last_rotation = datetime.now(UTC).isoformat()
                 if not args.dry_run:
                     generate_opencode(m.model_id, dry_run=False)
                     save_state(state)
@@ -658,7 +658,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
     # Update state
     state.active_model_index = MODEL_IDS.index(found_model.model_id)
     state.active_model_id = found_model.model_id
-    state.last_rotation = datetime.now(timezone.utc).isoformat()
+    state.last_rotation = datetime.now(UTC).isoformat()
 
     # Log to MAGI: exhaustion of previous model
     if not args.dry_run:
