@@ -17,9 +17,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Load qwen_fallback by file path so we don't need scripts as a package
-_SCRIPT_PATH = (
-    Path(__file__).resolve().parent.parent / "scripts" / "qwen_fallback.py"
-)
+_SCRIPT_PATH = Path(__file__).resolve().parent.parent / "scripts" / "qwen_fallback.py"
 _spec = importlib.util.spec_from_file_location("qwen_fallback", _SCRIPT_PATH)
 assert _spec is not None, f"Could not load spec from {_SCRIPT_PATH}"
 assert _spec.loader is not None, f"No loader for spec from {_SCRIPT_PATH}"
@@ -42,9 +40,7 @@ def mock_state_file(tmp_path):
 def mock_template_file(tmp_path):
     """Patch TEMPLATE_PATH to a temp file with a basic template."""
     template_file = tmp_path / "opencode.template.json"
-    template_file.write_text(
-        json.dumps({"model": "qwen/{model}", "provider": {}}, indent=2)
-    )
+    template_file.write_text(json.dumps({"model": "qwen/{model}", "provider": {}}, indent=2))
     with patch.object(qwf, "TEMPLATE_PATH", template_file):
         yield template_file
 
@@ -66,9 +62,7 @@ def mock_tracking_file(tmp_path):
 
 
 @pytest.fixture
-def patched_paths(
-    mock_state_file, mock_template_file, mock_config_file, mock_tracking_file
-):
+def patched_paths(mock_state_file, mock_template_file, mock_config_file, mock_tracking_file):
     """Combine all path patches into one fixture for convenience."""
     yield
 
@@ -342,9 +336,7 @@ class TestGenerateOpencode:
             config = json.loads(mock_config_file.read_text())
             assert config["extra"]["nested"] == "test-model"
 
-    def test_preserves_env_var_placeholder(
-        self, mock_template_file, mock_config_file
-    ):
+    def test_preserves_env_var_placeholder(self, mock_template_file, mock_config_file):
         """Template uses {model} but {env:...} should be preserved."""
         ok = qwf.generate_opencode("qwen3-coder-plus")
         assert ok is True
@@ -367,9 +359,7 @@ class TestGenerateOpencode:
 
 class TestProbeModel:
     def test_skip_set_models_return_skip_immediately(self):
-        status, remaining = qwf.probe_model(
-            "qwen-plus", MagicMock()
-        )  # in SKIP_SET
+        status, remaining = qwf.probe_model("qwen-plus", MagicMock())  # in SKIP_SET
         assert status == qwf.ModelStatus.SKIP
         assert remaining is None
 
@@ -719,6 +709,7 @@ class TestCmdRotate:
 
     def test_all_models_exhausted_exits_with_error(self, mock_client, patched_paths, small_catalog):
         """When every probeable model is exhausted, should exit 1."""
+
         def mock_probe(model_id, client):
             return qwf.ModelStatus.EXHAUSTED, 0
 
@@ -732,14 +723,17 @@ class TestCmdRotate:
         """--model should set active model directly without probing."""
         args = _make_args(rotate=True, model="gamma-3")
 
-        with patch.object(qwf, "MODEL_IDS", ["alpha-1", "beta-2", "gamma-3"]), patch.object(
-            qwf,
-            "MODELS",
-            [
-                qwf.ModelInfo("alpha-1", qwf.Tier.CODER, 1),
-                qwf.ModelInfo("beta-2", qwf.Tier.CODER, 2),
-                qwf.ModelInfo("gamma-3", qwf.Tier.FLAGSHIP, 5),
-            ],
+        with (
+            patch.object(qwf, "MODEL_IDS", ["alpha-1", "beta-2", "gamma-3"]),
+            patch.object(
+                qwf,
+                "MODELS",
+                [
+                    qwf.ModelInfo("alpha-1", qwf.Tier.CODER, 1),
+                    qwf.ModelInfo("beta-2", qwf.Tier.CODER, 2),
+                    qwf.ModelInfo("gamma-3", qwf.Tier.FLAGSHIP, 5),
+                ],
+            ),
         ):
             qwf.cmd_rotate(args)
 

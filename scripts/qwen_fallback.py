@@ -228,9 +228,7 @@ def load_state() -> RotationState:
         data = json.loads(STATE_PATH.read_text())
         return RotationState(**data)
     except (json.JSONDecodeError, TypeError, KeyError) as exc:
-        print(
-            f"WARNING: state file corrupted ({exc}), reinitializing.", file=sys.stderr
-        )
+        print(f"WARNING: state file corrupted ({exc}), reinitializing.", file=sys.stderr)
         return _fresh_state()
 
 
@@ -377,9 +375,7 @@ def write_tracking(state: RotationState, entries: list[dict] | None = None) -> N
     """Write or rewrite docs/stage-a-tracking.md."""
     days_remaining = _days_until(EXPIRATION_DATE)
     active_count = sum(
-        1
-        for m in MODELS
-        if m.model_id not in state.exhausted_set and m.model_id not in SKIP_SET
+        1 for m in MODELS if m.model_id not in state.exhausted_set and m.model_id not in SKIP_SET
     )
     exhausted_count = len([m for m in MODELS if m.model_id in state.exhausted_set])
     skip_count = len(SKIP_SET)
@@ -430,8 +426,7 @@ def _format_activity_log(entries: list[dict] | None) -> str:
             rem = e.get("remaining_estimate", -1)
             rem_str = f"{rem:,}" if isinstance(rem, int) and rem >= 0 else "—"
             lines.append(
-                f"| {ts} | {e['model_id']} | {e['action']} | {rem_str} "
-                f"| {e.get('notes', '')} |"
+                f"| {ts} | {e['model_id']} | {e['action']} | {rem_str} | {e.get('notes', '')} |"
             )
     return "\n".join(lines) + "\n"
 
@@ -447,9 +442,7 @@ def _format_roster(state: RotationState) -> str:
             status = "ACTIVE"
         else:
             status = "UNKNOWN"
-        lines.append(
-            f"| {i + 1} | {m.tier.value} | {m.model_id} | {status} | 1,000,000 |"
-        )
+        lines.append(f"| {i + 1} | {m.tier.value} | {m.model_id} | {status} | 1,000,000 |")
     return "\n".join(lines)
 
 
@@ -534,11 +527,7 @@ def cmd_status(args: argparse.Namespace) -> None:
         print(f"\n{'Model':50s} {'Status':15s} {'Remaining':>10s}")
         print("-" * 78)
         for r in results:
-            rem = (
-                f"{r['remaining']:>10,}"
-                if isinstance(r.get("remaining"), int)
-                else "         —"
-            )
+            rem = f"{r['remaining']:>10,}" if isinstance(r.get("remaining"), int) else "         —"
             print(f"{r['model']:50s} {r['status']:15s} {rem}")
         print("-" * 78)
         print(
@@ -696,8 +685,7 @@ def cmd_rotate(args: argparse.Namespace) -> None:
         generate_opencode(found_model.model_id, dry_run=True)
 
     print(
-        f"Rotated to {found_model.model_id} (Tier {found_model.tier.value}). "
-        f"opencode.json updated."
+        f"Rotated to {found_model.model_id} (Tier {found_model.tier.value}). opencode.json updated."
     )
 
 
@@ -769,12 +757,8 @@ def main() -> None:
         action="store_true",
         help="Force rotation regardless of current model status",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="Output as JSON (for automation)"
-    )
-    parser.add_argument(
-        "--model", type=str, help="Override active model directly, skip rotation"
-    )
+    parser.add_argument("--json", action="store_true", help="Output as JSON (for automation)")
+    parser.add_argument("--model", type=str, help="Override active model directly, skip rotation")
     parser.add_argument(
         "--dry-run",
         action="store_true",
