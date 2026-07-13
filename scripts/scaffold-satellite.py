@@ -381,7 +381,7 @@ def _render_cli(name: str, class_name: str, pkg: str) -> str:
 
 
 def _render_conftest(pkg: str) -> str:
-    return dedent(f"""\
+    return dedent("""\
     from __future__ import annotations
 
     from typing import Any
@@ -409,7 +409,7 @@ def _render_conftest(pkg: str) -> str:
             output_type: type[BaseModel],
             **kwargs: Any,
         ) -> BaseModel:
-            return output_type.model_validate({{}})
+            return output_type.model_validate({})
 
         def complete_with_tools(
             self,
