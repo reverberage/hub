@@ -135,6 +135,8 @@ def _render_provider() -> str:
     import os
     from typing import Protocol
 
+    from pydantic import BaseModel
+
 
     class ModelProvider(Protocol):
         \"\"\"Structural protocol — any object with these attributes is a valid provider.
@@ -148,48 +150,135 @@ def _render_provider() -> str:
         def complete_with_tools(self, messages: list[dict], tools: list[dict], **kwargs) -> object: ...
 
 
-    DEFAULT_MODEL = "qwen3-coder-plus"
-    DEFAULT_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    # Env-var-driven defaults with Qwen fallback for backward compatibility
+    DEFAULT_MODEL: str = os.environ.get(
+        "N3RVERBERAGE_DEFAULT_MODEL",
+        "qwen3-coder-plus",
+    )
+    DEFAULT_BASE_URL: str = os.environ.get(
+        "N3RVERBERAGE_DEFAULT_BASE_URL",
+        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    )
+
+    # Provider fallback map: provider_type → (default_model, default_url, api_key_env_var)
+    _PROVIDER_FALLBACKS: dict[str, tuple[str, str, str]] = {
+        "qwen": (
+            "qwen3-coder-plus",
+            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+            "DASHSCOPE_API_KEY",
+        ),
+        "openai": (
+            "gpt-4",
+            "https://api.openai.com/v1",
+            "OPENAI_API_KEY",
+        ),
+        "local": (
+            "qwen2.5",
+            "http://127.0.0.1:11434/v1",
+            "",
+        ),
+    }
 
 
-    class _DefaultProvider:
-        \"\"\"Inline OpenAI fallback when n3rverberage is not installed.\"\"\"
+    class _GenericProvider:
+        \"\"\"Generic OpenAI-compatible fallback provider.
 
-        def __init__(self, model: str | None = None):
-            self.model = model or DEFAULT_MODEL
-            self.base_url = DEFAULT_BASE_URL
+        Works with any OpenAI-compatible endpoint (Qwen/DashScope,
+        OpenAI, Ollama, vLLM, etc.).  No provider-specific error
+        handling — all API errors are wrapped as generic exceptions.
+        \"\"\"
+
+        def __init__(self, *, model: str, base_url: str, api_key: str) -> None:
+            self.model = model
+            self.base_url = base_url
+            self._api_key = api_key
+
+        def _client(self):
+            from openai import OpenAI
+            return OpenAI(api_key=self._api_key, base_url=self.base_url, timeout=60.0)
 
         def complete(self, messages: list[dict], **kwargs) -> str:
-            return self._chat(messages, **kwargs)
-
-        def complete_structured(self, messages: list[dict], output_type: type, **kwargs) -> object:
-            return self._chat(messages, response_format=output_type, **kwargs)
-
-        def complete_with_tools(self, messages: list[dict], tools: list[dict], **kwargs) -> object:
-            return self._chat(messages, tools=tools, **kwargs)
-
-        def _chat(self, messages, **kwargs):
-            from openai import OpenAI
-            client = OpenAI(
-                api_key=os.environ.get("DASHSCOPE_API_KEY", ""),
-                base_url=self.base_url,
-            )
-            response = client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                **kwargs,
-            )
+            max_tokens = kwargs.pop("max_tokens", 4096)
+            try:
+                response = self._client().chat.completions.create(
+                    model=self.model, messages=messages, max_tokens=max_tokens, **kwargs,
+                )
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", 500) or 500
+                raise RuntimeError(f"[{self.model}] HTTP {status_code}: {{exc}}") from exc
             return response.choices[0].message.content or ""
 
+        def complete_structured(self, messages: list[dict], output_type: type, **kwargs) -> object:
+            import json
+            schema = output_type.model_json_schema()
+            max_tokens = kwargs.pop("max_tokens", 4096)
+            try:
+                response = self._client().chat.completions.create(
+                    model=self.model, messages=messages, max_tokens=max_tokens,
+                    response_format={"type": "json_schema", "json_schema": {"name": output_type.__name__, "schema": schema, "strict": True}},
+                )
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", 500) or 500
+                raise RuntimeError(f"[{self.model}] HTTP {status_code}: {{exc}}") from exc
+            raw = response.choices[0].message.content
+            if not raw:
+                raise RuntimeError(f"[{{self.model}}] Empty structured response")
+            try:
+                return output_type.model_validate(json.loads(raw))
+            except Exception as exc:
+                raise RuntimeError(f"[{{self.model}}] Validation failed: {{exc}}") from exc
 
-    def get_provider(model_override: str | None = None) -> ModelProvider:
-        \"\"\"Resolve provider: n3rverberage if available, inline OpenAI fallback otherwise.\"\"\"
+        def complete_with_tools(self, messages: list[dict], tools: list[dict], **kwargs) -> object:
+            max_tokens = kwargs.pop("max_tokens", 4096)
+            try:
+                response = self._client().chat.completions.create(
+                    model=self.model, messages=messages, tools=tools, tool_choice="auto", max_tokens=max_tokens, **kwargs,
+                )
+            except Exception as exc:
+                status_code = getattr(exc, "status_code", 500) or 500
+                raise RuntimeError(f"[{self.model}] HTTP {status_code}: {{exc}}") from exc
+            return response.choices[0].message
+
+
+    def get_provider(
+        model: str | None = None,
+        provider: str | None = None,
+    ) -> ModelProvider:
+        \"\"\"Resolve provider: n3rverberage if available, generic fallback otherwise.
+
+        Parameters
+        ----------
+        model : str | None
+            Override model ID.  Defaults to DEFAULT_MODEL.
+        provider : str | None
+            Provider name (qwen, openai, local).  Overrides
+            ``N3RVERBERAGE_PROVIDER`` env var.
+        \"\"\"
+        resolved_model = model or DEFAULT_MODEL
+        resolved_provider = provider or os.environ.get("N3RVERBERAGE_PROVIDER") or "qwen"
+
         try:
-            from n3rverberage.providers import get_provider as n3rv_get_provider  # type: ignore
-            provider = n3rv_get_provider(model_override)
-            return provider
+            from n3rverberage.providers import get_provider as n3rv_get_provider
+            return n3rv_get_provider(name=f"{{resolved_provider}}:{{resolved_model}}")
         except ImportError:
-            return _DefaultProvider(model=model_override)
+            pass
+
+        # Fallback: generic OpenAI-compatible provider
+        provider_type = resolved_provider.strip().lower()
+        if provider_type not in _PROVIDER_FALLBACKS:
+            raise ValueError(f"Unknown provider: '{{provider_type}}'. Supported: {{', '.join(_PROVIDER_FALLBACKS)}}")
+
+        default_model, default_url, api_key_var = _PROVIDER_FALLBACKS[provider_type]
+        base_url = os.environ.get("N3RVERBERAGE_DEFAULT_BASE_URL") or default_url
+        api_key = os.environ.get(api_key_var) if api_key_var else "not-needed"
+        if api_key_var and not api_key:
+            raise ValueError(f"{{api_key_var}} is not set. Set it or install n3rverberage.")
+
+        return _GenericProvider(
+            model=resolved_model or default_model,
+            base_url=base_url,
+            api_key=api_key,
+        )
     """)
 
 
@@ -260,7 +349,11 @@ def _render_cli(name: str, class_name: str, pkg: str) -> str:
             False, "--json", help="Output as JSON"
         ),
         model: str | None = typer.Option(
-            None, "--model", "-m", help="Override model (e.g., qwen:qwen3-coder-plus)"
+            None, "--model", "-m", help="Override model ID (e.g., qwen3-coder-plus)"
+        ),
+        provider: str | None = typer.Option(
+            None, "--provider",
+            help="Provider name: qwen, openai, local.  Overrides N3RVERBERAGE_PROVIDER.",
         ),
     ) -> None:
         \"\"\"Process input and produce output.\"\"\"
@@ -268,8 +361,7 @@ def _render_cli(name: str, class_name: str, pkg: str) -> str:
             from {pkg}.models import MediaInput
 
             media_input = MediaInput(path=input_path)
-            provider = get_provider(model)
-            engine = {class_name}Engine(provider)
+            engine = {class_name}Engine(get_provider(model=model, provider=provider))
             result = engine.process(media_input)
 
             if json:
@@ -288,10 +380,54 @@ def _render_cli(name: str, class_name: str, pkg: str) -> str:
     """)
 
 
+def _render_conftest(pkg: str) -> str:
+    return dedent("""\
+    from __future__ import annotations
+
+    from typing import Any
+
+    from pydantic import BaseModel
+
+
+    class MockProvider:
+        \"\"\"Structural mock provider — no inheritance, just matches ModelProvider protocol.
+
+        Use in engine tests to avoid real API calls.  Returns canned responses
+        for all three completion methods.
+        \"\"\"
+
+        def __init__(self, model: str = "mock-model", base_url: str = "mock://"):
+            self.model = model
+            self.base_url = base_url
+
+        def complete(self, messages: list[dict], **kwargs: Any) -> str:
+            return "mock completion response"
+
+        def complete_structured(
+            self,
+            messages: list[dict],
+            output_type: type[BaseModel],
+            **kwargs: Any,
+        ) -> BaseModel:
+            return output_type.model_validate({})
+
+        def complete_with_tools(
+            self,
+            messages: list[dict],
+            tools: list[dict],
+            **kwargs: Any,
+        ) -> object:
+            from types import SimpleNamespace
+            return SimpleNamespace(content="mock tool result", tool_calls=[])
+    """)
+
+
 def _render_test(name: str, pkg: str) -> str:
     return dedent(f"""\
     from typer.testing import CliRunner
     from {pkg}.cli import app
+    from {pkg}.engine import {_class_name(name)}Engine
+    from tests.conftest import MockProvider
 
     runner = CliRunner()
 
@@ -308,6 +444,14 @@ def _render_test(name: str, pkg: str) -> str:
         result = runner.invoke(app, ["--help"])
         assert result.exit_code == 0
         assert "Usage" in result.output or "Usage" in result.stderr
+
+
+    def test_engine_with_mock_provider() -> None:
+        \"\"\"Engine works with MockProvider — zero network calls.\"\"\"
+        engine = {_class_name(name)}Engine(provider=MockProvider())
+        result = engine.process("test input")
+        assert result is not None
+        assert "mock completion" in result.data
     """)
 
 
@@ -370,6 +514,7 @@ def scaffold(name: str, output_dir: Path | None = None) -> None:
     (target / "pyproject.toml").write_text(_render_pyproject(name, pkg))
     (target / "README.md").write_text(_render_readme(name))
     (target / "tests" / "__init__.py").write_text("")
+    (target / "tests" / "conftest.py").write_text(_render_conftest(pkg))
     (target / "tests" / f"test_{pkg}.py").write_text(_render_test(name, pkg))
 
     (pkg_dir / "__init__.py").write_text(_render_init(name, class_name, pkg))
