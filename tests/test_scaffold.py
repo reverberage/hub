@@ -187,7 +187,47 @@ class TestScaffoldOutput:
         assert "DEFAULT_MODEL" in content
         assert "def get_provider" in content
         # Fallback pattern for when n3rverberage not installed
-        assert "_DefaultProvider" in content or "ImportError" in content
+        assert "_GenericProvider" in content or "ImportError" in content
+
+    def test_provider_has_env_var_defaults(self, scaffolded):
+        """DEFAULT_MODEL reads from env var, not hardcoded."""
+        provider_file = scaffolded / "src" / "rvrb_test_scout" / "provider.py"
+        content = provider_file.read_text()
+        assert "N3RVERBERAGE_DEFAULT_MODEL" in content
+        assert "N3RVERBERAGE_DEFAULT_BASE_URL" in content
+
+    def test_provider_has_generic_fallback(self, scaffolded):
+        """Provider has _GenericProvider (not Qwen-specific _DashScopeProvider)."""
+        provider_file = scaffolded / "src" / "rvrb_test_scout" / "provider.py"
+        content = provider_file.read_text()
+        assert "_GenericProvider" in content
+        # Should NOT have Qwen-specific fallback classes
+        assert "_DashScopeProvider" not in content
+        assert "_DefaultProvider" not in content
+
+    def test_cli_has_provider_flag(self, scaffolded):
+        """CLI has --provider flag."""
+        cli_file = scaffolded / "src" / "rvrb_test_scout" / "cli.py"
+        content = cli_file.read_text()
+        assert "--provider" in content
+        assert "N3RVERBERAGE_PROVIDER" in content
+
+    def test_conftest_has_mock_provider(self, scaffolded):
+        """tests/conftest.py has MockProvider class."""
+        conftest_file = scaffolded / "tests" / "conftest.py"
+        assert conftest_file.is_file()
+        content = conftest_file.read_text()
+        assert "class MockProvider" in content
+        assert "def complete" in content
+        assert "def complete_structured" in content
+        assert "def complete_with_tools" in content
+
+    def test_test_file_uses_mock_provider(self, scaffolded):
+        """test_*.py imports and uses MockProvider."""
+        test_dir = scaffolded / "tests"
+        for test_file in test_dir.glob("test_*.py"):
+            content = test_file.read_text()
+            assert "MockProvider" in content, f"{test_file} does not use MockProvider"
 
     def test_engine_has_provider_injection(self, scaffolded):
         """engine.py has constructor-injected provider with Protocol type hint."""

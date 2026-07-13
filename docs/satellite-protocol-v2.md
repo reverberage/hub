@@ -117,19 +117,49 @@ Every satellite's `provider.py` must expose:
 | Export | Type | Purpose |
 |--------|------|---------|
 | `ModelProvider` | `Protocol` | Type hint for engine constructor |
-| `DEFAULT_MODEL` | `str` | e.g., `"qwen3-coder-plus"` |
-| `DEFAULT_BASE_URL` | `str` | e.g., `"https://dashscope-intl.aliyuncs.com/compatible-mode/v1"` |
-| `get_provider(model)` | `(str|None) -> ModelProvider` | Provider factory |
+| `DEFAULT_MODEL` | `str` | Resolved from `N3RVERBERAGE_DEFAULT_MODEL` env var, fallback `"qwen3-coder-plus"` |
+| `DEFAULT_BASE_URL` | `str` | Resolved from `N3RVERBERAGE_DEFAULT_BASE_URL` env var, fallback `"https://dashscope-intl.aliyuncs.com/compatible-mode/v1"` |
+| `get_provider(model, provider)` | `(str|None, str|None) -> ModelProvider` | Provider factory |
+
+### Environment Variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `N3RVERBERAGE_PROVIDER` | `qwen` | Provider name: `qwen`, `openai`, `local` |
+| `N3RVERBERAGE_DEFAULT_MODEL` | `qwen3-coder-plus` | Global default model ID for all providers |
+| `N3RVERBERAGE_DEFAULT_BASE_URL` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` | Global default base URL for all providers |
+| `N3RVERBERAGE_VERIFY_SEARCH_MODEL` | `qwen3-coder-plus` | Verify search phase model override |
+| `N3RVERBERAGE_VERIFY_JUDGE_MODEL` | `qwen3.7-plus` | Verify judge phase model override |
+
+**Provider-specific API keys** (unchanged):
+
+| Provider | Env Var |
+|----------|---------|
+| Qwen DashScope | `DASHSCOPE_API_KEY` |
+| OpenAI | `OPENAI_API_KEY` |
+| Local | None required |
+
+### CLI `--provider` Flag
+
+Every satellite CLI must accept a `--provider` flag that overrides `N3RVERBERAGE_PROVIDER`:
+
+```python
+provider: str | None = typer.Option(
+    None, "--provider",
+    help="Provider name: qwen, openai, local.  Overrides N3RVERBERAGE_PROVIDER.",
+)
+```
+
+Resolution precedence: `--provider` CLI flag > `N3RVERBERAGE_PROVIDER` env var > `"qwen"` default.
 
 ### get_provider() Resolution
 
 ```python
-def get_provider(model_override: str | None = None) -> ModelProvider:
+def get_provider(model: str | None = None, provider: str | None = None) -> ModelProvider:
     """
     1. Try: from n3rverberage.providers import get_provider as n3rv_get_provider
-            return n3rv_get_provider(name)   # reads N3RVERBERAGE_PROVIDER env var
-    2. Fallback: openai.OpenAI(base_url=DEFAULT_BASE_URL, api_key=os.environ["DASHSCOPE_API_KEY"])
-                 wrapped in an object matching ModelProvider Protocol
+            return n3rv_get_provider(name=f"{provider}:{model}")
+    2. Fallback: Generic OpenAI-compatible provider using env-var-driven defaults
     """
 ```
 
@@ -208,7 +238,11 @@ def main(
     input_path: Path = typer.Argument(..., help="Input file or directory"),
     output: Path | None = typer.Option(None, "--output", "-o", help="Write output to file (default: stdout)"),
     json: bool = typer.Option(False, "--json", help="Output as JSON"),
-    model: str | None = typer.Option(None, "--model", "-m", help="Override model (e.g., qwen:qwen3-coder-plus)"),
+    model: str | None = typer.Option(None, "--model", "-m", help="Override model ID (e.g., qwen3-coder-plus)"),
+    provider: str | None = typer.Option(
+        None, "--provider",
+        help="Provider name: qwen, openai, local.  Overrides N3RVERBERAGE_PROVIDER.",
+    ),
 ) -> None:
     """<Satellite description>"""
 ```
@@ -219,6 +253,7 @@ def main(
 |------|:--------:|---------|
 | `--json` | Yes | Structured output (JSON) instead of human-readable |
 | `--model` / `-m` | Yes | Override provider model |
+| `--provider` | No | Override provider name (qwen, openai, local) |
 | `--output` / `-o` | Yes | Write to file instead of stdout |
 
 ### Exit Codes
