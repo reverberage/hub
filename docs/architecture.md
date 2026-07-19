@@ -44,7 +44,7 @@ rvrb-transcriber meeting.mp3 | rvrb-verify
 rvrb-transcriber audio.mp3 | rvrb-verify --model qwen3-coder-plus
 ```
 
-**Multi-step chain (planned):**
+**Working three-satellite chain:**
 
 ```
 transcriber (audio → text)

@@ -21,7 +21,7 @@ Each satellite is an independent `pip install`-able Python package — usable al
 |-----------|---------|--------|
 | **transcriber** | `rvrb-transcriber` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 | **verify** | `rvrb-verify` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
-| **transform** | `rvrb-transform` | planned |
+| **transform** | `rvrb-transform` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 
 See the [roadmap](./docs/roadmap.md) for planned satellites.
 
@@ -36,6 +36,12 @@ rvrb-transcriber meeting.mp3 | rvrb-verify
 
 # Full audit trail: transcribe → JSON → verify with a specific model
 rvrb-transcriber audio.mp3 | rvrb-verify --model qwen3.7-plus
+
+# Three-satellite chain: transcribe → verify → transform
+rvrb-transcriber meeting.mp3 | rvrb-verify | rvrb-transform "format as meeting minutes"
+
+# Transform with JSON output
+rvrb-transform "summarize" "The quick brown fox jumps over the lazy dog" --json
 ```
 
 For programmatic composition, see the [Satellite Protocol v2](./docs/satellite-protocol-v2.md)

@@ -6,6 +6,7 @@
 |-----------|---------|--------|----------|-------------|
 | **transcriber** | `rvrb-transcriber` | alpha | AUDIO→TEXT | AI-powered audio transcription |
 | **verify** | `rvrb-verify` | alpha | TEXT→TEXT | Claim verification engine (two-phase pipeline) |
+| **transform** | `rvrb-transform` | alpha | TEXT→TEXT | General-purpose text transformation (natural language instructions) |
 
 ## The Harvest — Satellites by Modality
 
@@ -16,10 +17,9 @@ model's strengths. All follow [satellite protocol v2](./satellite-protocol-v2.md
 
 | # | Satellite | Modality | Model | What |
 |---|-----------|----------|-------|------|
-| 1 | **transform** | TEXT→TEXT | `qwen3-coder-plus` | Format conversion, summarization, restructuring |
-| 2 | **see** | IMAGE→TEXT | `qwen3.7-plus` | Image understanding, OCR, visual description |
-| 3 | **hear** | AUDIO→TEXT | `qwen3.5-omni-plus` | Multimodal audio comprehension (beyond ASR) |
-| 4 | **speak** | TEXT→AUDIO | `cosyvoice-v3.5-plus` | Text-to-speech via DashScope native API |
+| 1 | **see** | IMAGE→TEXT | `qwen3.7-plus` | Image understanding, OCR, visual description |
+| 2 | **hear** | AUDIO→TEXT | `qwen3.5-omni-plus` | Multimodal audio comprehension (beyond ASR) |
+| 3 | **speak** | TEXT→AUDIO | `cosyvoice-v3.5-plus` | Text-to-speech via DashScope native API |
 
 ### Tier 2 — Composable Pipelines
 
