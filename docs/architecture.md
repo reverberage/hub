@@ -26,10 +26,25 @@ python .opencode/scripts/scaffold-satellite.py <name>
 
 ## Composition pattern
 
-Satellites compose into domain-specific workflows. Each satellite reads from
-stdin/files and writes to stdout/files — Unix-style pipelines.
+Satellites compose into domain-specific workflows. Text-consuming satellites
+accept stdin when no positional argument is given. Each satellite writes to
+stdout by default. This enables Unix-style pipeline composition.
 
-Example pipeline:
+### Working pipeline examples
+
+**Transcribe → Verify claims in the transcript:**
+
+```bash
+rvrb-transcriber meeting.mp3 | rvrb-verify
+```
+
+**Transcribe → JSON → Verify with model override:**
+
+```bash
+rvrb-transcriber audio.mp3 | rvrb-verify --model qwen3-coder-plus
+```
+
+**Multi-step chain (planned):**
 
 ```
 transcriber (audio → text)

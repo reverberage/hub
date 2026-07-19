@@ -22,7 +22,24 @@ Each satellite is an independent `pip install`-able Python package — usable al
 | **transcriber** | `rvrb-transcriber` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 | **verify** | `rvrb-verify` | ![alpha](https://img.shields.io/badge/maturity-alpha-crimson) |
 | **transform** | `rvrb-transform` | planned |
-| **scout** | `rvrb-scout` | planned |
+
+See the [roadmap](./docs/roadmap.md) for planned satellites.
+
+## Composition
+
+Satellites compose via Unix pipelines — each writes to stdout, text-consuming
+satellites read from stdin.
+
+```bash
+# Transcribe a meeting, verify the claims in the transcript
+rvrb-transcriber meeting.mp3 | rvrb-verify
+
+# Full audit trail: transcribe → JSON → verify with a specific model
+rvrb-transcriber audio.mp3 | rvrb-verify --model qwen3.7-plus
+```
+
+For programmatic composition, see the [Satellite Protocol v2](./docs/satellite-protocol-v2.md)
+(`MediaInput`/`MediaOutput` API).
 
 ## Philosophy
 
@@ -43,6 +60,7 @@ Each satellite is an independent `pip install`-able Python package — usable al
 | Doc | Description |
 |-----|-------------|
 | [Satellite Protocol](./docs/satellite-protocol.md) | Build, package, and naming conventions |
+| [Satellite Protocol v2](./docs/satellite-protocol-v2.md) | Media I/O types, provider contract, engine spec |
 | [Architecture](./docs/architecture.md) | Hub/satellite model and composition patterns |
 | [Roadmap](./docs/roadmap.md) | Shipped satellites and planned priorities |
 
