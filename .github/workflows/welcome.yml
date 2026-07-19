@@ -1,0 +1,31 @@
+name: Welcome first-time contributors
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    name: Welcome first-timer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: |
+            Welcome to reverberage! Thanks for your first PR.
+
+            A maintainer will review this shortly. In the meantime:
+            - Make sure CI passes (lint, typecheck, tests)
+            - Read [CONTRIBUTING.md](https://github.com/reverberage/hub/blob/main/CONTRIBUTING.md) if you haven't
+
+            We appreciate the contribution.
+          issue-message: |
+            Thanks for opening your first issue! A maintainer will respond shortly.
+
+            If this is a bug report, please include steps to reproduce.
+            If this is a feature request, describe the use case.
