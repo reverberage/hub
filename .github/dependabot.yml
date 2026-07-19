@@ -9,3 +9,13 @@ updates:
       - "juanmanueldaza"
     labels:
       - "dependencies"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    reviewers:
+      - "juanmanueldaza"
+    labels:
+      - "dependencies"

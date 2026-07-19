@@ -1,0 +1,33 @@
+# Label rules for actions/labeler@v5
+# Docs: https://github.com/actions/labeler
+
+area:scripts:
+  - changed-files:
+    - any-glob-to-any-file:
+      - scripts/**
+
+area:docs:
+  - changed-files:
+    - any-glob-to-any-file:
+      - docs/**
+
+area:tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - tests/**
+
+area:ci:
+  - changed-files:
+    - any-glob-to-any-file:
+      - .github/**
+
+area:infrastructure:
+  - changed-files:
+    - any-glob-to-any-file:
+      - pyproject.toml
+      - ruff.toml
+      - mypy.ini
+      - .pre-commit-config.yaml
+      - AGENTS.md
+      - CONTRIBUTING.md
+      - SECURITY.md
