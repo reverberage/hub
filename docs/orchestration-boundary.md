@@ -207,7 +207,7 @@ A concrete reference for what goes where.
 | `.opencode/commands/*.md` | Slash command definitions |
 | `.opencode/skills/*/SKILL.md` | Agent skill instructions |
 | `.opencode/agents/*.md` | Subagent definitions |
-| `README.md`, `LICENSE`, `SECURITY.md` | Project metadata |
+| `README.md`, `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md` | Project metadata |
 
 ### Shipped by n3rverberage (runtime code in `reverberage/n3rverberage`)
 
@@ -242,7 +242,6 @@ protocol). This is a two-head dependency: hub for the spec, n3rverberage for the
 | `.opencode/package.json` | Node deps for tools/plugins |
 | `.n3rverberage/*` | A2A config, hub state, memory storage |
 | `.githooks/*` | Git hook scripts |
-| `CONTRIBUTING.md`, `SECURITY.md` | Standard community docs |
 
 **The rule**: hub owns the contract (specs, protocols, commands, skills, roadmap). n3rverberage owns
 the implementation as both a **config generator** (what `init` writes into consumer repos) and a
