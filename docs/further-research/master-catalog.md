@@ -9,7 +9,7 @@
 
 **STATUS CHANGE (verified 2026-07-13 via nlnet.nl/news/2026/20260601-call.html)**:
 
-NLnet is currently taking stock of a decade of NGI Zero and preparing transition to the new "Open Internet Stack" effort. The Restack program URL (https://nlnet.nl/Restack/) returns 404. The general open call is CLOSED.
+NLnet is currently taking stock of a decade of NGI Zero and preparing transition to the new "Open Internet Stack" effort. The Restack program has been discontinued (URL removed). The general open call is CLOSED.
 
 **Currently accepting ONLY two topics for Aug 1, 2026 deadline**:
 1. NGI Taler — privacy-preserving digital payments (GNU Taler ecosystem)
@@ -133,7 +133,7 @@ NLnet is currently taking stock of a decade of NGI Zero and preparing transition
 ### 14. Sloan Foundation - Open Source in Science
 - **Type**: Grants for open source in scientific research
 - **Fit**: LOW - science-focused, not general OSS
-- **URL**: https://sloan.org/programs/digital-technology
+- **URL**: Not currently accessible (403). See sloan.org for current programs.
 - **Status**: [OK] Live page
 
 ### 15. Baidu Cloud / PaddlePaddle

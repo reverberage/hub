@@ -94,7 +94,7 @@ Cursor, Claude, Claude for IDE, Cline, CodeBuddy, Crush, Droid, Goose, Kilo, Lin
 
 ## 🇨🇳 Huawei Cloud (华为云)
 
-**URL**: https://www.huaweicloud.com/developer/nurture-plan.html
+**URL**: Huawei Cloud Nurture Plan (page moved; check huaweicloud.com for current programs)
 
 ### Verification Status
 - ❌ **404 page** — the "沃土计划" (Nurture Plan) URL is dead
