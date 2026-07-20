@@ -20,7 +20,6 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Literal
 
-
 Modality = Literal["text", "audio", "image", "video"]
 
 
@@ -97,7 +96,6 @@ def _render_pyproject(name: str, pkg: str) -> str:
 def _render_init(name: str, class_name: str, pkg: str, modality: str) -> str:
     has_io = modality != "text"
     io_import = f"from {pkg}.io import read_media, write_media\n" if has_io else ""
-    io_export = '    "read_media",\n    "write_media",\n' if has_io else ""
 
     lines = [
         f'"""reverberage satellite: {name}"""',
@@ -108,22 +106,24 @@ def _render_init(name: str, class_name: str, pkg: str, modality: str) -> str:
     ]
     if has_io:
         lines.append(io_import.rstrip("\n"))
-    lines.extend([
-        f"from {pkg}.models import {class_name}Result, MediaInput, MediaModality, MediaOutput",
-        f"from {pkg}.provider import DEFAULT_BASE_URL, DEFAULT_MODEL, ModelProvider, get_provider",
-        "",
-        "__all__ = [",
-        '    "__version__",',
-        f'    "{class_name}Engine",',
-        f'    "{class_name}Result",',
-        '    "MediaInput",',
-        '    "MediaModality",',
-        '    "MediaOutput",',
-        '    "ModelProvider",',
-        '    "get_provider",',
-        '    "DEFAULT_MODEL",',
-        '    "DEFAULT_BASE_URL",',
-    ])
+    lines.extend(
+        [
+            f"from {pkg}.models import {class_name}Result, MediaInput, MediaModality, MediaOutput",
+            f"from {pkg}.provider import DEFAULT_BASE_URL, DEFAULT_MODEL, ModelProvider, get_provider",
+            "",
+            "__all__ = [",
+            '    "__version__",',
+            f'    "{class_name}Engine",',
+            f'    "{class_name}Result",',
+            '    "MediaInput",',
+            '    "MediaModality",',
+            '    "MediaOutput",',
+            '    "ModelProvider",',
+            '    "get_provider",',
+            '    "DEFAULT_MODEL",',
+            '    "DEFAULT_BASE_URL",',
+        ]
+    )
     if has_io:
         lines.extend(['    "read_media",', '    "write_media",'])
     lines.append("]")
@@ -540,15 +540,13 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
     if has_file_input:
         file_check = (
             "        if not input_path.exists():\n"
-            "            typer.echo(f\"Error: File not found: {input_path}\", err=True)\n"
+            '            typer.echo(f"Error: File not found: {input_path}", err=True)\n'
             "            raise typer.Exit(code=1)\n"
             f"        engine = {class_name}Engine(get_provider(model=model, provider=provider))\n"
             "        result_obj = engine.process(input_path, prompt=prompt or None)\n"
         )
         input_param = (
-            '    input_path: Path = typer.Argument(\n'
-            f'        ..., help="{input_help}",\n'
-            '    ),\n'
+            f'    input_path: Path = typer.Argument(\n        ..., help="{input_help}",\n    ),\n'
         )
     else:
         file_check = (
@@ -556,9 +554,7 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
             "        result_obj = engine.process(text, prompt=prompt or None)\n"
         )
         input_param = (
-            '    text: str = typer.Argument(\n'
-            f'        ..., help="{input_help}",\n'
-            '    ),\n'
+            f'    text: str = typer.Argument(\n        ..., help="{input_help}",\n    ),\n'
         )
 
     body = (
@@ -578,41 +574,37 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "\n"
         "\n"
         "@app.command()\n"
-        "def main(\n"
-        + input_param +
-        '    prompt: str = typer.Option(\n'
+        "def main(\n" + input_param + "    prompt: str = typer.Option(\n"
         '        "", "--prompt", "-p", help="Custom prompt/instruction",\n'
-        '    ),\n'
-        '    json_output: bool = typer.Option(\n'
+        "    ),\n"
+        "    json_output: bool = typer.Option(\n"
         '        False, "--json", help="Output as JSON",\n'
-        '    ),\n'
-        '    model: str | None = typer.Option(\n'
+        "    ),\n"
+        "    model: str | None = typer.Option(\n"
         '        None, "--model", "-m", help="Override model ID",\n'
-        '    ),\n'
-        '    provider: str | None = typer.Option(\n'
+        "    ),\n"
+        "    provider: str | None = typer.Option(\n"
         '        None, "--provider", help="Provider name: qwen, openai, local",\n'
-        '    ),\n'
-        '    output: Path | None = typer.Option(\n'
+        "    ),\n"
+        "    output: Path | None = typer.Option(\n"
         '        None, "--output", "-o", help="Write output to file",\n'
-        '    ),\n'
-        ') -> None:\n'
+        "    ),\n"
+        ") -> None:\n"
         f'    """{class_name} engine — {modality} processing."""\n'
-        '    try:\n'
-        + file_check +
-        '        if json_output:\n'
-        '            typer.echo(result_obj.model_dump_json(indent=2))\n'
-        '        elif output:\n'
-        '            output.write_text(result_obj.output_text)\n'
-        '        else:\n'
-        '            typer.echo(result_obj.output_text)\n'
-        '\n'
-        '    except Exception as exc:\n'
+        "    try:\n" + file_check + "        if json_output:\n"
+        "            typer.echo(result_obj.model_dump_json(indent=2))\n"
+        "        elif output:\n"
+        "            output.write_text(result_obj.output_text)\n"
+        "        else:\n"
+        "            typer.echo(result_obj.output_text)\n"
+        "\n"
+        "    except Exception as exc:\n"
         '        typer.echo(f"Error: {exc}", err=True)\n'
-        '        raise typer.Exit(code=1) from exc\n'
-        '\n'
-        '\n'
+        "        raise typer.Exit(code=1) from exc\n"
+        "\n"
+        "\n"
         'if __name__ == "__main__":\n'
-        '    app()\n'
+        "    app()\n"
     )
     return body
 
@@ -1079,7 +1071,7 @@ def _render_test_cli(name: str, pkg: str) -> str:
 
 
 def _render_ci_workflow(name: str) -> str:
-    return dedent(f"""\
+    return dedent("""\
     name: CI
 
     on:
@@ -1098,7 +1090,7 @@ def _render_ci_workflow(name: str) -> str:
           - uses: actions/checkout@v4
           - uses: actions/setup-python@v6
             with:
-              python-version: ${{{{ matrix.python-version }}}}
+              python-version: ${{ matrix.python-version }}
           - name: Install
             run: pip install -e ".[dev]"
           - name: Lint (ruff)
@@ -1213,10 +1205,10 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     # Summary
     has_io = "✅" if modality != "text" else "skipped (text-only)"
     print(f"Scaffolded rvrb-{name} ({modality} modality)")
-    print(f"  Kernel: __init__.py, models.py, provider.py, engine.py")
+    print("  Kernel: __init__.py, models.py, provider.py, engine.py")
     print(f"  Optional: cli.py, mcp.py, io.py ({has_io})")
-    print(f"  Project: pyproject.toml, README.md, .github/workflows/ci.yml")
-    print(f"  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_cli.py")
+    print("  Project: pyproject.toml, README.md, .github/workflows/ci.yml")
+    print("  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_cli.py")
     print()
     print(f"  cd rvrb-{name}")
     print('  pip install -e ".[dev]"')
@@ -1225,7 +1217,9 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print("Usage: python scaffold-satellite.py <name> [output-dir] [--modality=text|audio|image|video]")
+        print(
+            "Usage: python scaffold-satellite.py <name> [output-dir] [--modality=text|audio|image|video]"
+        )
         sys.exit(1)
 
     name = validate_name(sys.argv[1])
