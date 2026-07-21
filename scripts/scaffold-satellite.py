@@ -1252,10 +1252,11 @@ if __name__ == "__main__":
     output_dir: Path | None = None
     for arg in sys.argv[2:]:
         if arg.startswith("--modality="):
-            modality = arg.split("=", 1)[1]
-            if modality not in ("text", "audio", "image", "video"):
-                print(f"Error: Unknown modality '{modality}'. Use: text, audio, image, video")
+            modality_value = arg.split("=", 1)[1]
+            if modality_value not in ("text", "audio", "image", "video"):
+                print(f"Error: Unknown modality '{modality_value}'. Use: text, audio, image, video")
                 sys.exit(1)
+            modality = modality_value  # type: ignore[assignment]
         elif arg.startswith("--"):
             print(f"Error: Unknown flag '{arg}'")
             sys.exit(1)
