@@ -77,7 +77,7 @@ def _render_pyproject(name: str, pkg: str) -> str:
     ]
 
     [project.scripts]
-    rvrb-{name} = "{pkg}.cli:main"
+    rvrb-{name} = "{pkg}.cli:app"
     rvrb-{name}-mcp = "{pkg}.mcp:main"
 
     [tool.ruff]
@@ -567,6 +567,7 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "\n"
         "import typer\n"
         "\n"
+        f"from {pkg} import __version__\n"
         f"from {pkg}.engine import {class_name}Engine\n"
         f"from {pkg}.provider import get_provider\n"
         "\n"
@@ -584,7 +585,7 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         '        None, "--model", "-m", help="Override model ID",\n'
         "    ),\n"
         "    provider: str | None = typer.Option(\n"
-        '        None, "--provider", help="Provider name: qwen, openai, local",\n'
+        '        None, "--provider", help="Provider name: qwen, openai, local. Overrides N3RVERBERAGE_PROVIDER env var.",\n'
         "    ),\n"
         "    output: Path | None = typer.Option(\n"
         '        None, "--output", "-o", help="Write output to file",\n'
@@ -601,6 +602,12 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "    except Exception as exc:\n"
         '        typer.echo(f"Error: {exc}", err=True)\n'
         "        raise typer.Exit(code=1) from exc\n"
+        "\n"
+        "\n"
+        "@app.command()\n"
+        "def version() -> None:\n"
+        '    """Show version."""\n'
+        f'    typer.echo(f"rvrb-{name} {{__version__}}")\n'
         "\n"
         "\n"
         'if __name__ == "__main__":\n'
@@ -1067,6 +1074,11 @@ def _render_test_cli(name: str, pkg: str) -> str:
         result = runner.invoke(app, ["--model", "nonexistent-model", "--json", "test"])
         # Should exit non-zero (either missing input or provider error)
         assert result.exit_code != 0
+
+    def test_version() -> None:
+        result = runner.invoke(app, ["version"])
+        assert result.exit_code == 0
+        assert "0.1.0" in result.output
     """)
 
 
@@ -1200,7 +1212,7 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     (tests_dir / "test_models.py").write_text(_render_test_models(name, class_name, pkg))
     (tests_dir / "test_provider.py").write_text(_render_test_provider(name, pkg, default_model))
     (tests_dir / "test_engine.py").write_text(_render_test_engine(name, class_name, pkg))
-    (tests_dir / "test_cli.py").write_text(_render_test_cli(name, pkg))
+    (tests_dir / f"test_{pkg}.py").write_text(_render_test_cli(name, pkg))
 
     # Summary
     has_io = "✅" if modality != "text" else "skipped (text-only)"
@@ -1208,7 +1220,7 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     print("  Kernel: __init__.py, models.py, provider.py, engine.py")
     print(f"  Optional: cli.py, mcp.py, io.py ({has_io})")
     print("  Project: pyproject.toml, README.md, .github/workflows/ci.yml")
-    print("  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_cli.py")
+    print("  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_*.py")
     print()
     print(f"  cd rvrb-{name}")
     print('  pip install -e ".[dev]"')
