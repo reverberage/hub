@@ -574,6 +574,12 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "app = typer.Typer(no_args_is_help=True)\n"
         "\n"
         "\n"
+        "def version_callback(value: bool) -> None:\n"
+        "    if value:\n"
+        f'        typer.echo(f"rvrb-{name} {{__version__}}")\n'
+        "        raise typer.Exit()\n"
+        "\n"
+        "\n"
         "@app.command()\n"
         "def main(\n" + input_param + "    prompt: str = typer.Option(\n"
         '        "", "--prompt", "-p", help="Custom prompt/instruction",\n'
@@ -590,6 +596,9 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "    output: Path | None = typer.Option(\n"
         '        None, "--output", "-o", help="Write output to file",\n'
         "    ),\n"
+        "    version: bool = typer.Option(\n"
+        '        False, "--version", "-v", help="Show version and exit.", callback=version_callback, is_eager=True,\n'
+        "    ),\n"
         ") -> None:\n"
         f'    """{class_name} engine — {modality} processing."""\n'
         "    try:\n" + file_check + "        if json_output:\n"
@@ -602,12 +611,6 @@ def _render_cli(name: str, class_name: str, pkg: str, modality: str) -> str:
         "    except Exception as exc:\n"
         '        typer.echo(f"Error: {exc}", err=True)\n'
         "        raise typer.Exit(code=1) from exc\n"
-        "\n"
-        "\n"
-        "@app.command()\n"
-        "def version() -> None:\n"
-        '    """Show version."""\n'
-        f'    typer.echo(f"rvrb-{name} {{__version__}}")\n'
         "\n"
         "\n"
         'if __name__ == "__main__":\n'
@@ -944,7 +947,7 @@ def _render_test_provider(name: str, pkg: str, default_model: str) -> str:
 
     def test_get_provider_returns_model_provider() -> None:
         \"\"\"get_provider() returns something that quacks like a ModelProvider.\"\"\"
-        provider = get_provider(model="qwen3-coder-plus")
+        provider = get_provider(model="qwen3-coder-plus", provider="local")
         assert hasattr(provider, "model")
         assert hasattr(provider, "base_url")
         assert hasattr(provider, "complete")
@@ -1076,7 +1079,7 @@ def _render_test_cli(name: str, pkg: str) -> str:
         assert result.exit_code != 0
 
     def test_version() -> None:
-        result = runner.invoke(app, ["version"])
+        result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
         assert "0.1.0" in result.output
     """)
