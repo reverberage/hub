@@ -25,13 +25,13 @@ class TestValidation:
         """A simple lowercase name should succeed."""
         result = run_scaffold("my-sat", output_dir=temp_dir)
         assert result.returncode == 0, f"stderr: {result.stderr}"
-        assert (temp_dir / "my-sat").is_dir()
+        assert (temp_dir / "rvrb-my-sat").is_dir()
 
     def test_valid_underscore_name(self, temp_dir):
         """Names with underscores should succeed."""
         result = run_scaffold("my_sat", output_dir=temp_dir)
         assert result.returncode == 0
-        assert (temp_dir / "my_sat").is_dir()
+        assert (temp_dir / "rvrb-my_sat").is_dir()
 
     def test_invalid_uppercase(self, temp_dir):
         """Uppercase names should be rejected."""
@@ -55,7 +55,7 @@ class TestValidation:
 
     def test_duplicate_dir_error(self, temp_dir):
         """Creating a satellite where the dir already exists should fail."""
-        (temp_dir / "dupe").mkdir()
+        (temp_dir / "rvrb-dupe").mkdir()
         result = run_scaffold("dupe", output_dir=temp_dir)
         assert result.returncode != 0
         assert "already exists" in (result.stderr + result.stdout)
@@ -69,7 +69,7 @@ class TestScaffoldOutput:
         """Scaffold a test satellite and return its path."""
         result = run_scaffold("test-scout", output_dir=temp_dir)
         assert result.returncode == 0, f"Scaffold failed: {result.stderr}"
-        return temp_dir / "test-scout"
+        return temp_dir / "rvrb-test-scout"
 
     def test_directory_structure(self, scaffolded):
         """Scaffolded project has expected directories."""
@@ -223,9 +223,18 @@ class TestScaffoldOutput:
         assert "def complete_with_tools" in content
 
     def test_test_file_uses_mock_provider(self, scaffolded):
-        """test_*.py imports and uses MockProvider."""
+        """test_*.py imports and uses MockProvider (except CLI, provider, and models tests)."""
         test_dir = scaffolded / "tests"
         for test_file in test_dir.glob("test_*.py"):
+            # CLI tests don't need MockProvider - they test the CLI interface
+            if test_file.name == f"test_{scaffolded.name.replace('-', '_')}.py":
+                continue
+            # Provider tests test provider resolution, not engine behavior
+            if test_file.name == "test_provider.py":
+                continue
+            # Models tests test data structures, not provider behavior
+            if test_file.name == "test_models.py":
+                continue
             content = test_file.read_text()
             assert "MockProvider" in content, f"{test_file} does not use MockProvider"
 
@@ -246,7 +255,7 @@ class TestScaffoldIntegration:
         """Scaffold a test satellite and install it."""
         result = run_scaffold("test-integrate", output_dir=temp_dir)
         assert result.returncode == 0
-        path = temp_dir / "test-integrate"
+        path = temp_dir / "rvrb-test-integrate"
 
         # pip install editable
         install = subprocess.run(
