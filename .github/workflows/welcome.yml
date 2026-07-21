@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/first-interaction@v3
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-message: |
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_message: |
             Welcome to reverberage! Thanks for your first PR.
 
             A maintainer will review this shortly. In the meantime:
@@ -24,7 +24,7 @@ jobs:
             - Read [CONTRIBUTING.md](https://github.com/reverberage/hub/blob/main/CONTRIBUTING.md) if you haven't
 
             We appreciate the contribution.
-          issue-message: |
+          issue_message: |
             Thanks for opening your first issue! A maintainer will respond shortly.
 
             If this is a bug report, please include steps to reproduce.
