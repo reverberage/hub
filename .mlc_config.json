@@ -1,0 +1,5 @@
+{
+  "ignorePatterns": [
+    { "pattern": "^(Home|Getting-Started|CLI-Reference|Python-API|Models|Strategies|Output-Formats|MCP-Server|Architecture|Development|FAQ|Satellite-Protocol|Roadmap|Model-Catalog|Contributing|Engines)$" }
+  ]
+}
