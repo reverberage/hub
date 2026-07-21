@@ -1042,11 +1042,19 @@ def _render_test_cli(name: str, pkg: str) -> str:
 
     from __future__ import annotations
 
+    import re
+
     from typer.testing import CliRunner
 
     from {pkg}.cli import app
 
     runner = CliRunner()
+
+
+    def strip_ansi(text: str) -> str:
+        \"\"\"Remove ANSI escape codes from text.\"\"\"
+        ansi_escape = re.compile(r'\\x1b\\[[0-9;]*m')
+        return ansi_escape.sub('', text)
 
 
     def test_help() -> None:
@@ -1055,23 +1063,23 @@ def _render_test_cli(name: str, pkg: str) -> str:
 
     def test_json_flag_present() -> None:
         result = runner.invoke(app, ["--help"])
-        assert "--json" in result.output
+        assert "--json" in strip_ansi(result.output)
 
     def test_model_flag_present() -> None:
         result = runner.invoke(app, ["--help"])
-        assert "--model" in result.output
+        assert "--model" in strip_ansi(result.output)
 
     def test_provider_flag_present() -> None:
         result = runner.invoke(app, ["--help"])
-        assert "--provider" in result.output
+        assert "--provider" in strip_ansi(result.output)
 
     def test_output_flag_present() -> None:
         result = runner.invoke(app, ["--help"])
-        assert "--output" in result.output
+        assert "--output" in strip_ansi(result.output)
 
     def test_prompt_flag_present() -> None:
         result = runner.invoke(app, ["--help"])
-        assert "--prompt" in result.output
+        assert "--prompt" in strip_ansi(result.output)
 
     def test_exit_code_one_on_error() -> None:
         result = runner.invoke(app, ["--model", "nonexistent-model", "--json", "test"])
@@ -1081,7 +1089,7 @@ def _render_test_cli(name: str, pkg: str) -> str:
     def test_version() -> None:
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
-        assert "0.1.0" in result.output
+        assert "0.1.0" in strip_ansi(result.output)
     """)
 
 
