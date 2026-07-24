@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Scaffold a new reverberage satellite package (protocol v2).
 
-Usage: python scaffold-satellite.py <name> [output-dir]
+Usage: python scaffold-satellite.py <name> [output-dir] [--modality=<m>] [--remote <owner/repo>]
 
 Creates <output-dir>/<name>/ with mandatory kernel modules:
     __init__.py, models.py, provider.py, engine.py
-Plus: cli.py, mcp.py, tests/, pyproject.toml, README.md, .github/workflows/ci.yml
+Plus: cli.py, mcp.py, tests/, pyproject.toml, README.md,
+      .github/workflows/ci.yml, .github/workflows/sync-wiki.yml
 io.py is generated only for non-TEXT modalities (audio, image, video).
+
+With --remote, automatically creates the GitHub repo, pushes code, and
+initializes the wiki via scripts/init-satellite-wiki.py.
 
 Satellite protocol v2: docs/satellite-protocol-v2.md
 Reference implementation: rvrb-hear (85 tests, 54 ACs, zero defects)
@@ -1125,6 +1129,36 @@ def _render_ci_workflow(name: str) -> str:
     """)
 
 
+def _render_sync_wiki_workflow() -> str:
+    return dedent("""\
+    name: Sync Wiki
+
+    on:
+      push:
+        branches: [main]
+        paths:
+          - 'docs/**'
+
+    concurrency:
+      group: wiki-${{ github.ref }}
+      cancel-in-progress: true
+
+    jobs:
+      sync:
+        runs-on: ubuntu-latest
+        permissions:
+          contents: write
+        steps:
+          - uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+          - uses: reverberage/.github/actions/sync-wiki@main
+            with:
+              token: ${{ github.token }}
+              path: docs
+    """)
+
+
 def _render_readme(name: str) -> str:
     return dedent(f"""\
     # rvrb-{name}
@@ -1167,7 +1201,442 @@ def _render_readme(name: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") -> None:
+# ---------------------------------------------------------------------------
+# Wiki page renderers
+# ---------------------------------------------------------------------------
+
+
+def _wiki_home(name: str, class_name: str) -> str:
+    return dedent(f"""\
+    # rvrb-{name}
+
+    reverberage satellite: **{name}**.
+
+    The `{class_name}Engine` uses constructor-injected `ModelProvider` for {name} processing.
+
+    ## Quick Links
+
+    - [Architecture](Architecture) — Component design
+    - [CLI Reference](CLI-Reference) — All CLI commands and flags
+    - [Getting Started](Getting-Started) — Installation and basic usage
+    - [Development](Development) — Setup, testing, linting
+    - [FAQ](FAQ) — Frequently asked questions
+    - [MCP Server](MCP-Server) — MCP tool integration
+    - [Python API](Python-API) — Public API reference
+
+    ## Satellite Protocol
+
+    This satellite follows [satellite protocol v2](https://github.com/reverberage/hub/blob/main/docs/satellite-protocol-v2.md).
+    """)
+
+
+def _wiki_architecture(name: str, class_name: str, pkg: str, modality: str) -> str:
+    has_io = modality != "text"
+    io_section = (
+        f"""\n### I/O Layer
+
+The `io.py` module handles {modality} file reading and writing:
+
+- `read_media(path) -> MediaInput` — reads and validates {modality} files
+- `write_media(output, path) -> None` — writes results to files
+"""
+        if has_io
+        else ""
+    )
+    return dedent(f"""\
+    # Architecture
+
+    ## Component Diagram
+
+    ```
+    CLI (cli.py)       ← optional entry point
+      ↓
+    Engine (engine.py) ← core logic, constructor-injected provider
+      ↓
+    Provider (provider.py) ← ModelProvider Protocol + get_provider() factory
+      ↓
+    API (OpenAI-compatible LLM)
+    ```{io_section}
+    ### Provider Layer
+
+    Provider resolution follows a two-tier strategy:
+
+    1. Try to import `n3rverberage.providers.get_provider()` (full provider chain)
+    2. Fall back to `_GenericProvider` (standalone OpenAI-compatible client)
+
+    No hard dependency on n3rverberage — the satellite works standalone.
+
+    ### Engine Contract
+
+    ```python
+    class {class_name}Engine:
+        def __init__(self, provider: ModelProvider): ...
+        def process(self, input_data, prompt=None) -> {class_name}Result: ...
+    ```
+
+    - Single public method
+    - Constructor-injected provider (mock-ready)
+    - No side effects (I/O happens in cli.py and io.py only)
+    """)
+
+
+def _wiki_cli_ref(name: str, modality: str) -> str:
+    file_input = modality != "text"
+    input_desc = f"Path to {modality} file" if file_input else "Input text"
+    return dedent(f"""\
+    # CLI Reference
+
+    ## rvrb-{name}
+
+    ```bash
+    rvrb-{name} [OPTIONS] {input_desc}
+    ```
+
+    ### Arguments
+
+    | Argument | Required | Description |
+    |----------|:--------:|-------------|
+    | `{input_desc}` | Yes | The input to process |
+
+    ### Options
+
+    | Flag | Description |
+    |------|-------------|
+    | `--prompt, -p` | Custom prompt/instruction |
+    | `--json` | Output as JSON |
+    | `--model, -m` | Override model ID |
+    | `--provider` | Provider name: qwen, openai, local |
+    | `--output, -o` | Write output to file |
+    | `--version, -v` | Show version and exit |
+
+    ### Exit Codes
+
+    | Code | Meaning |
+    |:----:|---------|
+    | 0 | Success |
+    | 1 | Error (validation, provider, I/O) |
+
+    ### Pipe Composition
+
+    ```bash
+    # Chain with other satellites
+    rvrb-transcriber audio.mp3 | rvrb-{name}
+    rvrb-{name} input.txt --json | rvrb-verify
+    ```
+
+    ### MCP Server
+
+    ```bash
+    rvrb-{name}-mcp
+    ```
+    """)
+
+
+def _wiki_getting_started(name: str) -> str:
+    return dedent(f"""\
+    # Getting Started
+
+    ## Installation
+
+    ```bash
+    pip install rvrb-{name}
+    ```
+
+    With MCP support:
+
+    ```bash
+    pip install rvrb-{name}[mcp]
+    ```
+
+    ## Prerequisites
+
+    - Python >= 3.11
+    - API key for your chosen provider:
+      - Qwen (DashScope): `DASHSCOPE_API_KEY`
+      - OpenAI: `OPENAI_API_KEY`
+      - Local: none required
+
+    ## Quick Start
+
+    ```bash
+    # Set your API key
+    export DASHSCOPE_API_KEY=sk-...
+
+    # Run the satellite
+    rvrb-{name} "your input"
+
+    # With JSON output
+    rvrb-{name} "your input" --json
+    ```
+
+    ## Provider Configuration
+
+    | Variable | Default | Purpose |
+    |----------|---------|---------|
+    | `N3RVERBERAGE_PROVIDER` | qwen | Provider name |
+    | `N3RVERBERAGE_DEFAULT_MODEL` | (model-specific) | Default model ID |
+    | `N3RVERBERAGE_DEFAULT_BASE_URL` | DashScope endpoint | Base URL for API |
+    """)
+
+
+def _wiki_development(name: str) -> str:
+    return dedent(f"""\
+    # Development
+
+    ## Local Setup
+
+    ```bash
+    git clone https://github.com/reverberage/rvrb-{name}.git
+    cd rvrb-{name}
+    pip install -e ".[dev]"
+    ```
+
+    ## Testing
+
+    ```bash
+    # Run all tests (no network required)
+    pytest --offline
+
+    # Run with coverage
+    pytest --cov=src/
+    ```
+
+    ## Linting & Type Checking
+
+    ```bash
+    ruff check src/ tests/
+    mypy src/
+    ```
+
+    ## Release
+
+    ```bash
+    hatch build
+    hatch publish
+    ```
+
+    ## CI/CD
+
+    GitHub Actions runs on every push and PR:
+    - Python 3.11, 3.12, 3.13 matrix
+    - Ruff linting
+    - mypy type checking
+    - pytest (offline)
+    """)
+
+
+def _wiki_faq(name: str) -> str:
+    return dedent(f"""\
+    # FAQ
+
+    **Q: What does rvrb-{name} do?**
+    A: It's the {name} satellite in the reverberage ecosystem. See the [Home](Home) page for details.
+
+    **Q: Do I need n3rverberage?**
+    A: No. The satellite works standalone with its own `_GenericProvider` fallback. n3rverberage enhances it with provider chains and quota detection.
+
+    **Q: How do I change the model?**
+    A: Use `--model` flag or set `N3RVERBERAGE_DEFAULT_MODEL` env var.
+
+    **Q: Can I use this with OpenAI?**
+    A: Yes. Set `N3RVERBERAGE_PROVIDER=openai` and `OPENAI_API_KEY`.
+
+    **Q: Can I use a local model?**
+    A: Yes. Set `N3RVERBERAGE_PROVIDER=local` and `N3RVERBERAGE_DEFAULT_BASE_URL` to your local endpoint.
+    """)
+
+
+def _wiki_mcp(name: str, class_name: str) -> str:
+    return dedent(f"""\
+    # MCP Server
+
+    rvrb-{name} exposes an optional MCP server for use with any MCP-compatible agent.
+
+    ## Starting the Server
+
+    ```bash
+    rvrb-{name}-mcp
+    ```
+
+    This runs the MCP server via stdio transport.
+
+    ## Tool: process
+
+    The server registers a single `process` tool:
+
+    - **Parameters**: `input_text` (str, required), `prompt` (str, optional)
+    - **Returns**: dict with `output_text`, `model`, `provider`, `prompt`, `tokens_used`
+
+    ## Usage with opencode
+
+    Add to your `opencode.json`:
+
+    ```json
+    {{
+      "mcpServers": {{
+        "rvrb-{name}": {{
+          "command": "rvrb-{name}-mcp",
+          "args": []
+        }}
+      }}
+    }}
+    ```
+    """)
+
+
+def _wiki_python_api(name: str, class_name: str, pkg: str) -> str:
+    return dedent(f"""\
+    # Python API
+
+    ## {class_name}Engine
+
+    The main engine class.
+
+    ```python
+    from {pkg} import {class_name}Engine, {class_name}Result
+    from {pkg}.provider import get_provider
+
+    engine = {class_name}Engine(provider=get_provider())
+    result = engine.process("your input")
+    print(result.output_text)
+    ```
+
+    ## {class_name}Result
+
+    | Field | Type | Description |
+    |-------|------|-------------|
+    | `output_text` | `str` | The processed output |
+    | `model` | `str` | Model ID used |
+    | `provider` | `str` | Provider name (not API key) |
+    | `prompt` | `str` | The prompt used |
+    | `tokens_used` | `int \\| None` | Token count if available |
+
+    ## ModelProvider Protocol
+
+    ```python
+    class ModelProvider(Protocol):
+        model: str
+        base_url: str
+        def complete(self, messages, **kwargs) -> str: ...
+        def complete_structured(self, messages, output_type, **kwargs) -> BaseModel: ...
+        def complete_with_tools(self, messages, tools, **kwargs) -> ToolResult: ...
+    ```
+
+    Any object matching this structure is a valid provider — no inheritance required.
+
+    ## get_provider()
+
+    ```python
+    from {pkg}.provider import get_provider
+
+    # Default provider (Qwen)
+    provider = get_provider()
+
+    # Specific provider and model
+    provider = get_provider(model="gpt-4", provider="openai")
+
+    # Local model
+    provider = get_provider(provider="local")
+    ```
+
+    ## MockProvider (for testing)
+
+    ```python
+    from tests.conftest import MockProvider
+
+    engine = {class_name}Engine(provider=MockProvider())
+    result = engine.process("test input")
+    ```
+    """)
+
+
+# ---------------------------------------------------------------------------
+# GitHub & wiki helpers
+# ---------------------------------------------------------------------------
+
+
+def _init_github_and_wiki(name: str, remote: str, target: Path) -> None:
+    """Create GitHub repo, push code, and initialize wiki."""
+    import subprocess
+
+    def eprint(*a: object, **kw: object) -> None:
+        kw.setdefault("file", sys.stderr)
+        print(*a, **kw)
+
+    def run(cmd: list[str], **kw: object) -> subprocess.CompletedProcess[str]:
+        kw.setdefault("capture_output", True)
+        kw.setdefault("text", True)
+        result = subprocess.run(cmd, **kw)  # type: ignore[arg-type]
+        if result.returncode != 0 and kw.get("check") is not False:
+            eprint(f"Command failed: {' '.join(str(c) for c in cmd)}")
+            eprint(result.stderr.strip() if result.stderr else "")
+        return result  # type: ignore[return-value]
+
+    eprint(f"=== Setting up GitHub repo: {remote} ===")
+
+    # Step 1: Check gh auth
+    auth = run(["gh", "auth", "status"])
+    if auth.returncode != 0:
+        eprint("WARNING: gh CLI not authenticated. Skipping GitHub setup.")
+        eprint(f"  Run: cd {target} && git remote add origin https://github.com/{remote}.git")
+        eprint(
+            f"  Then: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/ --workflow"
+        )
+        return
+
+    # Step 2: Initialize git in the target directory
+    run(["git", "-C", str(target), "init", "-b", "main"])
+    run(["git", "-C", str(target), "config", "user.email", "bot@reverberage.github.com"])
+    run(["git", "-C", str(target), "config", "user.name", "reverberage bot"])
+    run(["git", "-C", str(target), "add", "."])
+    run(["git", "-C", str(target), "commit", "-m", f"feat: scaffold rvrb-{name}"])
+
+    # Step 3: Create GitHub repo
+    eprint(f"Creating GitHub repo: {remote}...")
+    repo_create = run(
+        ["gh", "repo", "create", remote, "--private", "--source", str(target), "--push"],
+    )
+    if repo_create.returncode != 0:
+        eprint("WARNING: Failed to create GitHub repo. Manual setup required.")
+        return
+
+    # Step 4: Initialize wiki
+    eprint("Initializing wiki...")
+    wiki_script = Path(__file__).resolve().parent / "init-satellite-wiki.py"
+    if wiki_script.exists():
+        wiki_run = run(
+            [
+                sys.executable,
+                str(wiki_script),
+                remote,
+                "--push",
+                str(target / "docs"),
+                "--workflow",
+            ],
+        )
+        if wiki_run.returncode == 0:
+            eprint(f"✅ Wiki initialized at https://github.com/{remote}/wiki")
+        else:
+            eprint("WARNING: Wiki initialization did not complete.")
+            eprint(f"  Run: python {wiki_script} {remote} --push docs/ --workflow")
+    else:
+        eprint("WARNING: init-satellite-wiki.py not found. Skipping wiki init.")
+        eprint(
+            f"  Run: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/ --workflow"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Scaffold function
+# ---------------------------------------------------------------------------
+
+
+def scaffold(
+    name: str,
+    output_dir: Path | None = None,
+    modality: str = "text",
+    remote: str | None = None,
+) -> None:
     """Scaffold a new satellite package."""
     if output_dir is not None:
         target = Path(output_dir) / f"rvrb-{name}"
@@ -1197,6 +1666,8 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     tests_dir.mkdir(parents=True)
     pkg_dir.mkdir(parents=True)
     (target / ".github" / "workflows").mkdir(parents=True)
+    docs_dir = target / "docs"
+    docs_dir.mkdir(parents=True)
 
     # Write mandatory kernel modules
     (pkg_dir / "__init__.py").write_text(_render_init(name, class_name, pkg, modality))
@@ -1216,6 +1687,17 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     (target / "pyproject.toml").write_text(_render_pyproject(name, pkg))
     (target / "README.md").write_text(_render_readme(name))
     (target / ".github" / "workflows" / "ci.yml").write_text(_render_ci_workflow(name))
+    (target / ".github" / "workflows" / "sync-wiki.yml").write_text(_render_sync_wiki_workflow())
+
+    # Write wiki documentation pages (used by init-satellite-wiki.py --push)
+    (docs_dir / "Home.md").write_text(_wiki_home(name, class_name))
+    (docs_dir / "Architecture.md").write_text(_wiki_architecture(name, class_name, pkg, modality))
+    (docs_dir / "CLI-Reference.md").write_text(_wiki_cli_ref(name, modality))
+    (docs_dir / "Getting-Started.md").write_text(_wiki_getting_started(name))
+    (docs_dir / "Development.md").write_text(_wiki_development(name))
+    (docs_dir / "FAQ.md").write_text(_wiki_faq(name))
+    (docs_dir / "MCP-Server.md").write_text(_wiki_mcp(name, class_name))
+    (docs_dir / "Python-API.md").write_text(_wiki_python_api(name, class_name, pkg))
 
     # Write test files
     (tests_dir / "__init__.py").write_text("")
@@ -1231,32 +1713,59 @@ def scaffold(name: str, output_dir: Path | None = None, modality: str = "text") 
     print("  Kernel: __init__.py, models.py, provider.py, engine.py")
     print(f"  Optional: cli.py, mcp.py, io.py ({has_io})")
     print("  Project: pyproject.toml, README.md, .github/workflows/ci.yml")
+    print("  CI/CD: .github/workflows/sync-wiki.yml (auto-syncs docs/ to wiki on push)")
+    print("  Wiki: docs/ (8 pages for wiki initialization)")
     print("  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_*.py")
-    print()
-    print(f"  cd rvrb-{name}")
-    print('  pip install -e ".[dev]"')
-    print("  pytest --offline")
+
+    if remote:
+        print()
+        _init_github_and_wiki(name, remote, target)
+    else:
+        print()
+        print("  Next steps:")
+        print(f"    cd rvrb-{name}")
+        print('    pip install -e ".[dev]"')
+        print("    pytest --offline")
+        print()
+        print("  To create the GitHub repo and wiki:")
+        print(
+            f"    python ../hub/scripts/init-satellite-wiki.py reverberage/rvrb-{name} --push docs/ --workflow"
+        )
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print(
-            "Usage: python scaffold-satellite.py <name> [output-dir] [--modality=text|audio|image|video]"
-        )
+    if len(sys.argv) < 2:
+        print(__doc__)
         sys.exit(1)
 
     name = validate_name(sys.argv[1])
 
-    # Parse --modality flag
+    # Parse flags
     modality: Modality = "text"
     output_dir: Path | None = None
-    for arg in sys.argv[2:]:
+    remote: str | None = None
+    i = 2
+    while i < len(sys.argv):
+        arg = sys.argv[i]
         if arg.startswith("--modality="):
             modality_value = arg.split("=", 1)[1]
             if modality_value not in ("text", "audio", "image", "video"):
                 print(f"Error: Unknown modality '{modality_value}'. Use: text, audio, image, video")
                 sys.exit(1)
             modality = modality_value  # type: ignore[assignment]
+            i += 1
+        elif arg == "--remote" and i + 1 < len(sys.argv):
+            remote = sys.argv[i + 1]
+            if "/" not in remote:
+                print(f"Error: --remote must be in format <owner>/<repo>, got '{remote}'")
+                sys.exit(1)
+            i += 2
+        elif arg.startswith("--remote="):
+            remote = arg.split("=", 1)[1]
+            if "/" not in remote:
+                print(f"Error: --remote must be in format <owner>/<repo>, got '{remote}'")
+                sys.exit(1)
+            i += 1
         elif arg.startswith("--"):
             print(f"Error: Unknown flag '{arg}'")
             sys.exit(1)
@@ -1264,7 +1773,8 @@ if __name__ == "__main__":
             if output_dir is None:
                 output_dir = Path(arg)
             else:
-                print("Error: Too many arguments")
+                print("Error: Too many positional arguments. Did you mean '--remote owner/repo'?")
                 sys.exit(1)
+            i += 1
 
-    scaffold(name, output_dir, modality)
+    scaffold(name, output_dir, modality, remote)

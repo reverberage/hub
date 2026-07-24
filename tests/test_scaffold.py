@@ -246,6 +246,52 @@ class TestScaffoldOutput:
         assert "def __init__(self, provider" in content
         assert "self.provider = provider" in content
 
+    def test_docs_directory(self, scaffolded):
+        """docs/ directory exists with wiki pages."""
+        docs_dir = scaffolded / "docs"
+        assert docs_dir.is_dir()
+        required_pages = [
+            "Home.md",
+            "Architecture.md",
+            "CLI-Reference.md",
+            "Getting-Started.md",
+            "Development.md",
+            "FAQ.md",
+            "MCP-Server.md",
+            "Python-API.md",
+        ]
+        for page in required_pages:
+            assert (docs_dir / page).is_file(), f"Missing docs page: {page}"
+
+    def test_docs_home_mentions_satellite(self, scaffolded):
+        """docs/Home.md mentions the satellite name."""
+        home = (scaffolded / "docs" / "Home.md").read_text()
+        assert "test-scout" in home
+
+    def test_docs_architecture_has_engine_class(self, scaffolded):
+        """docs/Architecture.md references the engine class."""
+        arch = (scaffolded / "docs" / "Architecture.md").read_text()
+        assert "TestScoutEngine" in arch
+        assert "ModelProvider" in arch
+
+    def test_docs_cli_ref_has_flags(self, scaffolded):
+        """docs/CLI-Reference.md lists required flags."""
+        cli_ref = (scaffolded / "docs" / "CLI-Reference.md").read_text()
+        assert "--json" in cli_ref
+        assert "--model" in cli_ref
+        assert "--provider" in cli_ref
+
+    def test_sync_wiki_workflow(self, scaffolded):
+        """Scaffolded satellites sync documentation changes to their wiki."""
+        workflow = scaffolded / ".github" / "workflows" / "sync-wiki.yml"
+        assert workflow.is_file()
+        content = workflow.read_text()
+        assert "branches: [main]" in content
+        assert "- 'docs/**'" in content
+        assert "group: wiki-${{ github.ref }}" in content
+        assert "cancel-in-progress: true" in content
+        assert "uses: reverberage/.github/actions/sync-wiki@main" in content
+
 
 class TestScaffoldIntegration:
     """Integration tests that require pip install of scaffolded project."""
