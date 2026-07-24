@@ -16,6 +16,7 @@ Suppress the "not working dir" warning: use -P at the start or set GIT_CEILING_D
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import subprocess
@@ -77,10 +78,39 @@ def resolve_satellite_name(repo_name: str) -> str:
     return repo_name
 
 
+WORKFLOW_CONTENT = r"""name: Sync Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+
+concurrency:
+  group: wiki-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: reverberage/.github/actions/sync-wiki@main
+        with:
+          token: ${{ github.token }}
+          path: docs
+"""
+
+
 def init_wiki(
     owner_repo: str,
     satellite_name: str | None = None,
     push_path: str | None = None,
+    add_workflow: bool = False,
 ) -> None:
     """Initialize a wiki for the given GitHub repository."""
     _owner, repo = owner_repo.split("/", 1)
@@ -240,6 +270,30 @@ def init_wiki(
     eprint(f"✅ Wiki initialized: https://github.com/{owner_repo}/wiki")
     eprint(f"   Clone URL: {wiki_clone_url}")
 
+    # ------------------------------------------------------------------
+    # Step 6: Optionally add the sync-wiki.yml workflow
+    # ------------------------------------------------------------------
+    if add_workflow:
+        eprint("Adding sync-wiki.yml workflow...")
+        encoded = base64.b64encode(WORKFLOW_CONTENT.encode()).decode()
+        result = run(
+            [
+                "gh",
+                "api",
+                f"repos/{owner_repo}/contents/.github/workflows/sync-wiki.yml",
+                "--method",
+                "PUT",
+                "--field",
+                "message=feat(ci): add wiki sync workflow",
+                "--field",
+                f"content={encoded}",
+            ]
+        )
+        if result.returncode == 0:
+            eprint("✅ sync-wiki.yml workflow added — docs/ will auto-sync to wiki on push")
+        else:
+            eprint("WARNING: Could not add sync-wiki.yml workflow.")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -257,13 +311,18 @@ def main() -> None:
         "--push",
         help="Path to directory with .md files to push as wiki pages",
     )
+    parser.add_argument(
+        "--workflow",
+        action="store_true",
+        help="Add .github/workflows/sync-wiki.yml for auto-sync on push",
+    )
     args = parser.parse_args()
 
     if "/" not in args.repo:
         eprint("ERROR: repo must be in format <owner>/<repo>")
         sys.exit(1)
 
-    init_wiki(args.repo, args.name, args.push)
+    init_wiki(args.repo, args.name, args.push, add_workflow=args.workflow)
 
 
 if __name__ == "__main__":

@@ -250,9 +250,16 @@ class TestScaffoldOutput:
         """docs/ directory exists with wiki pages."""
         docs_dir = scaffolded / "docs"
         assert docs_dir.is_dir()
-        required_pages = ["Home.md", "Architecture.md", "CLI-Reference.md",
-                          "Getting-Started.md", "Development.md", "FAQ.md",
-                          "MCP-Server.md", "Python-API.md"]
+        required_pages = [
+            "Home.md",
+            "Architecture.md",
+            "CLI-Reference.md",
+            "Getting-Started.md",
+            "Development.md",
+            "FAQ.md",
+            "MCP-Server.md",
+            "Python-API.md",
+        ]
         for page in required_pages:
             assert (docs_dir / page).is_file(), f"Missing docs page: {page}"
 
@@ -273,6 +280,17 @@ class TestScaffoldOutput:
         assert "--json" in cli_ref
         assert "--model" in cli_ref
         assert "--provider" in cli_ref
+
+    def test_sync_wiki_workflow(self, scaffolded):
+        """Scaffolded satellites sync documentation changes to their wiki."""
+        workflow = scaffolded / ".github" / "workflows" / "sync-wiki.yml"
+        assert workflow.is_file()
+        content = workflow.read_text()
+        assert "branches: [main]" in content
+        assert "- 'docs/**'" in content
+        assert "group: wiki-${{ github.ref }}" in content
+        assert "cancel-in-progress: true" in content
+        assert "uses: reverberage/.github/actions/sync-wiki@main" in content
 
 
 class TestScaffoldIntegration:

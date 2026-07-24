@@ -5,7 +5,8 @@ Usage: python scaffold-satellite.py <name> [output-dir] [--modality=<m>] [--remo
 
 Creates <output-dir>/<name>/ with mandatory kernel modules:
     __init__.py, models.py, provider.py, engine.py
-Plus: cli.py, mcp.py, tests/, pyproject.toml, README.md, .github/workflows/ci.yml
+Plus: cli.py, mcp.py, tests/, pyproject.toml, README.md,
+      .github/workflows/ci.yml, .github/workflows/sync-wiki.yml
 io.py is generated only for non-TEXT modalities (audio, image, video).
 
 With --remote, automatically creates the GitHub repo, pushes code, and
@@ -1128,6 +1129,36 @@ def _render_ci_workflow(name: str) -> str:
     """)
 
 
+def _render_sync_wiki_workflow() -> str:
+    return dedent("""\
+    name: Sync Wiki
+
+    on:
+      push:
+        branches: [main]
+        paths:
+          - 'docs/**'
+
+    concurrency:
+      group: wiki-${{ github.ref }}
+      cancel-in-progress: true
+
+    jobs:
+      sync:
+        runs-on: ubuntu-latest
+        permissions:
+          contents: write
+        steps:
+          - uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+          - uses: reverberage/.github/actions/sync-wiki@main
+            with:
+              token: ${{ github.token }}
+              path: docs
+    """)
+
+
 def _render_readme(name: str) -> str:
     return dedent(f"""\
     # rvrb-{name}
@@ -1201,13 +1232,17 @@ def _wiki_home(name: str, class_name: str) -> str:
 
 def _wiki_architecture(name: str, class_name: str, pkg: str, modality: str) -> str:
     has_io = modality != "text"
-    io_section = f"""\n### I/O Layer
+    io_section = (
+        f"""\n### I/O Layer
 
 The `io.py` module handles {modality} file reading and writing:
 
 - `read_media(path) -> MediaInput` — reads and validates {modality} files
 - `write_media(output, path) -> None` — writes results to files
-""" if has_io else ""
+"""
+        if has_io
+        else ""
+    )
     return dedent(f"""\
     # Architecture
 
@@ -1544,7 +1579,9 @@ def _init_github_and_wiki(name: str, remote: str, target: Path) -> None:
     if auth.returncode != 0:
         eprint("WARNING: gh CLI not authenticated. Skipping GitHub setup.")
         eprint(f"  Run: cd {target} && git remote add origin https://github.com/{remote}.git")
-        eprint(f"  Then: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/")
+        eprint(
+            f"  Then: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/ --workflow"
+        )
         return
 
     # Step 2: Initialize git in the target directory
@@ -1568,16 +1605,25 @@ def _init_github_and_wiki(name: str, remote: str, target: Path) -> None:
     wiki_script = Path(__file__).resolve().parent / "init-satellite-wiki.py"
     if wiki_script.exists():
         wiki_run = run(
-            [sys.executable, str(wiki_script), remote, "--push", str(target / "docs")],
+            [
+                sys.executable,
+                str(wiki_script),
+                remote,
+                "--push",
+                str(target / "docs"),
+                "--workflow",
+            ],
         )
         if wiki_run.returncode == 0:
             eprint(f"✅ Wiki initialized at https://github.com/{remote}/wiki")
         else:
             eprint("WARNING: Wiki initialization did not complete.")
-            eprint(f"  Run: python {wiki_script} {remote} --push docs/")
+            eprint(f"  Run: python {wiki_script} {remote} --push docs/ --workflow")
     else:
         eprint("WARNING: init-satellite-wiki.py not found. Skipping wiki init.")
-        eprint(f"  Run: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/")
+        eprint(
+            f"  Run: python ../hub/scripts/init-satellite-wiki.py {remote} --push docs/ --workflow"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -1641,6 +1687,7 @@ def scaffold(
     (target / "pyproject.toml").write_text(_render_pyproject(name, pkg))
     (target / "README.md").write_text(_render_readme(name))
     (target / ".github" / "workflows" / "ci.yml").write_text(_render_ci_workflow(name))
+    (target / ".github" / "workflows" / "sync-wiki.yml").write_text(_render_sync_wiki_workflow())
 
     # Write wiki documentation pages (used by init-satellite-wiki.py --push)
     (docs_dir / "Home.md").write_text(_wiki_home(name, class_name))
@@ -1666,6 +1713,7 @@ def scaffold(
     print("  Kernel: __init__.py, models.py, provider.py, engine.py")
     print(f"  Optional: cli.py, mcp.py, io.py ({has_io})")
     print("  Project: pyproject.toml, README.md, .github/workflows/ci.yml")
+    print("  CI/CD: .github/workflows/sync-wiki.yml (auto-syncs docs/ to wiki on push)")
     print("  Wiki: docs/ (8 pages for wiki initialization)")
     print("  Tests: conftest.py, test_models.py, test_provider.py, test_engine.py, test_*.py")
 
@@ -1680,7 +1728,9 @@ def scaffold(
         print("    pytest --offline")
         print()
         print("  To create the GitHub repo and wiki:")
-        print(f"    python ../hub/scripts/init-satellite-wiki.py reverberage/rvrb-{name} --push docs/")
+        print(
+            f"    python ../hub/scripts/init-satellite-wiki.py reverberage/rvrb-{name} --push docs/ --workflow"
+        )
 
 
 if __name__ == "__main__":
